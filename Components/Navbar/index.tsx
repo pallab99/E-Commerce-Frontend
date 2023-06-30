@@ -7,7 +7,7 @@ import {
   ShoppingCartIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation';
 
 const user = {
   name: 'Tom Cook',
@@ -32,7 +32,8 @@ function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ');
 }
 export default function Navbar(props: any) {
-  const router=useRouter()
+  const router = useRouter();
+  const path = usePathname();
   return (
     <>
       <div className="">
@@ -47,8 +48,8 @@ export default function Navbar(props: any) {
                         className="h-8 w-8"
                         src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
                         alt="Urban Bazar"
-                        onClick={()=>{
-                          router.push("/")
+                        onClick={() => {
+                          router.push('/');
                         }}
                       />
                     </div>
@@ -82,8 +83,8 @@ export default function Navbar(props: any) {
                         <ShoppingCartIcon
                           className="h-6 w-6"
                           aria-hidden="true"
-                          onClick={()=>{
-                            router.push("/cart")
+                          onClick={() => {
+                            router.push('/cart');
                           }}
                         />
                       </button>
@@ -196,9 +197,9 @@ export default function Navbar(props: any) {
                       <ShoppingCartIcon
                         className="h-6 w-6"
                         aria-hidden="true"
-                        onClick={()=>{
-                          router.push("/cart")
-                        }}  
+                        onClick={() => {
+                          router.push('/cart');
+                        }}
                       />
                     </button>
                     <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 mb-7 ml-10 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
@@ -223,13 +224,15 @@ export default function Navbar(props: any) {
           )}
         </Disclosure>
 
-        <header className="bg-white shadow">
-          <div className="mx-auto max-w-7xl px-4 pt-5 pb-5 sm:px-6 lg:px-8">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-            Urban Bazar
-            </h1>
-          </div>
-        </header>
+        {path.includes('/checkout') ? null : (
+          <header className="bg-white shadow">
+            <div className="mx-auto max-w-7xl px-4 pt-5 pb-5 sm:px-6 lg:px-8">
+              <h1 className="text-4xl font-bold tracking-tight text-gray-900">
+                Urban Bazar
+              </h1>
+            </div>
+          </header>
+        )}
         {/* <main>
           <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
             {props?.children}

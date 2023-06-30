@@ -1,9 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { useRouter } from 'next/navigation';
+import { useRouter,usePathname } from 'next/navigation';
 
 import Form from "../../Components/Checkout/Form";
 import Products_Added_To_The_Cart from "../../Components/Checkout/Products"
+import Navbar from '@/Components/Navbar';
 const products = [
   {
     id: 1,
@@ -52,15 +53,19 @@ const addresses = [
 ];
 export default function Page() {
   const router = useRouter();
+  const path=usePathname()
+  console.log(path);
+  
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5">
-        <Form addresses={addresses}></Form>
-        <div className="lg:col-span-2">
-         <Products_Added_To_The_Cart products={products}></Products_Added_To_The_Cart>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <Navbar />
+        <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5">
+          <Form addresses={addresses}></Form>
+          <div className="lg:col-span-2">
+           <Products_Added_To_The_Cart products={products}></Products_Added_To_The_Cart>
+          </div>
         </div>
       </div>
-    </div>
   );
 }
