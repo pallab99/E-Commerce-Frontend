@@ -4,11 +4,9 @@ import Navbar from '@/Components/Navbar';
 import Cart from '../../Components/Cart';
 
 export default function Page() {
-  return (
-    <>
-      <Navbar>
-        <Cart></Cart>
-      </Navbar>
-    </>
-  );
+  return <>
+    <Navbar>
+      <Cart />
+    </Navbar>
+  </>;
 }
