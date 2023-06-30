@@ -1,7 +1,7 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'Trendify',
+  title: 'Urban Bazar',
   description: 'Shop all trendy pieces today',
 };
 
