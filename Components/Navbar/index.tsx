@@ -35,7 +35,7 @@ export default function Navbar(props: any) {
   const router=useRouter()
   return (
     <>
-      <div className="min-h-full">
+      <div className="">
         <Disclosure as="nav" className="bg-gray-800">
           {({ open }) => (
             <>
@@ -224,17 +224,17 @@ export default function Navbar(props: any) {
         </Disclosure>
 
         <header className="bg-white shadow">
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl px-4 pt-5 pb-5 sm:px-6 lg:px-8">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900">
             Urban Bazar
             </h1>
           </div>
         </header>
-        <main>
+        {/* <main>
           <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
             {props?.children}
           </div>
-        </main>
+        </main> */}
       </div>
     </>
   );
