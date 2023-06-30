@@ -7,6 +7,7 @@ import {
   ShoppingCartIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/navigation'
 
 const user = {
   name: 'Tom Cook',
@@ -30,7 +31,8 @@ const userNavigation = [
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ');
 }
-export default function Navbar({ children }: any) {
+export default function Navbar(props: any) {
+  const router=useRouter()
   return (
     <>
       <div className="min-h-full">
@@ -77,6 +79,9 @@ export default function Navbar({ children }: any) {
                         <ShoppingCartIcon
                           className="h-6 w-6"
                           aria-hidden="true"
+                          onClick={()=>{
+                            router.push("/cart")
+                          }}
                         />
                       </button>
                       <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 mb-7 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
@@ -188,9 +193,12 @@ export default function Navbar({ children }: any) {
                       <ShoppingCartIcon
                         className="h-6 w-6"
                         aria-hidden="true"
+                        onClick={()=>{
+                          router.push("/cart")
+                        }}  
                       />
                     </button>
-                    <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 mb-7 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                    <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 mb-7 ml-10 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
                       3
                     </span>
                   </div>
@@ -221,7 +229,7 @@ export default function Navbar({ children }: any) {
         </header>
         <main>
           <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-            {children}
+            {props?.children}
           </div>
         </main>
       </div>
