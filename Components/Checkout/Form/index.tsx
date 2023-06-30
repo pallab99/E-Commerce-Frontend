@@ -5,7 +5,7 @@ export default function Index(props: any) {
     <>
       <div className="lg:col-span-3 mb-10">
         <form className="bg-white px-5 py-12 mt-12">
-          <div className="space-y-12">
+          <div className="space-y-5">
             <div className="border-b border-gray-900/10 pb-12">
               <h2 className="text-2xl font-semibold leading-7 text-gray-900">
                 Personal Information
@@ -76,12 +76,12 @@ export default function Index(props: any) {
                   >
                     Country
                   </label>
-                  <div className="mt-2 md:col-span-6">
+                  <div className="mt-2 md:col-span-6 lg:col-span-10">
                     <select
                       id="country"
                       name="country"
                       autoComplete="country-name"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                      className=" w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                     >
                       <option>United States</option>
                       <option>Canada</option>
@@ -179,7 +179,7 @@ export default function Index(props: any) {
               </button>
             </div>
 
-            <div className="border-b border-gray-900/10 pb-12">
+            <div className="border-b border-gray-900/10 pb-5">
               <h2 className="text-base font-semibold leading-7 text-gray-900">
                 Addresses
               </h2>
@@ -190,7 +190,7 @@ export default function Index(props: any) {
                 {props?.addresses.map((address: any) => (
                   <li
                     key={address?.name}
-                    className="flex justify-between gap-x-6 px-5 py-5 border-solid border-2 border-gray-200"
+                    className="flex justify-between gap-x-6 px-5 py-5 border-solid border-2 border-gray-200 mb-3"
                   >
                     <div className="flex gap-x-4">
                       <input
