@@ -31,31 +31,26 @@ export default function ProductList(props: any) {
         queryString += `${key}=${lastCategoryValue}&`;
       }
     }
+    let sortQueryString = '';
     for (let key in props?.sort) {
-      queryString += `${key}=${props?.sort[key]}&`;
+      sortQueryString += `${key}=${props?.sort[key]}&`;
     }
-    // if (!props?.filter?.category && !props?.filter?.brand && !props?.sort) {
-    //   queryString = '';
-    //   console.log('call', queryString);
-    // }
-    // if (
-    //   Object?.keys(props?.filter?.category).length==0 &&
-    //   Object?.keys(props?.filter?.brand).length==0 &&
-    //   Object?.keys(props?.sort).length==0
-    // ){
-    //   queryString = '';
-    //   console.log('call');
-    // }
-    // console.log('queryString', queryString);
+    const isCategoryEmpty =
+      !props?.filter?.category ||
+      Object.keys(props.filter.category).length === 0;
+    const isBrandEmpty =
+      !props?.filter?.brand || Object.keys(props.filter.brand).length === 0;
 
-    // if(queryString[9]=='&' && queryString.endsWith('&')){
-    //   queryString=""
-    // }
-    //   console.log('queryString1', queryString);
-    // console.log('type', typeof props?.filter?.category);
+    if (isCategoryEmpty) {
+      queryString = queryString.replace('category=&', '');
+    }
+
+    if (isBrandEmpty) {
+      queryString = queryString.replace('brand=&', '');
+    }
 
     axios
-      .get('http://localhost:8080/products?' + queryString)
+      .get('http://localhost:8080/products?' + queryString + sortQueryString)
       .then((res) => {
         setProducts(res.data);
         setAllProductsLoader(false);
