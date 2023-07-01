@@ -88,7 +88,7 @@ export default function Navbar(props: any) {
                           }}
                         />
                       </button>
-                      <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 mb-7 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                      <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 mb-7 ml-0text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
                         3
                       </span>
                       {/* Profile dropdown */}

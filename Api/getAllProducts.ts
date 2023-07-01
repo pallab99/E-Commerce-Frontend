@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const getAllProducts = async (props: any) => {
+const getAllProducts = async (props: any, pagination: any) => {
   try {
     const { filter, sort } = props;
 
@@ -17,6 +17,11 @@ const getAllProducts = async (props: any) => {
     for (let key in sort) {
       sortQueryString += `${key}=${sort[key]}&`;
     }
+    let paginationQueryString = '';
+    for (let key in pagination) {
+      paginationQueryString += `${key}=${pagination[key]}&`;
+    }
+
     const isCategoryEmpty =
       !filter.category || Object.keys(filter.category).length === 0;
     const isBrandEmpty =
@@ -31,9 +36,13 @@ const getAllProducts = async (props: any) => {
     }
 
     const response = await axios.get(
-      'http://localhost:8080/products?' + queryString + sortQueryString
+      'http://localhost:8080/products?' +
+        queryString +
+        sortQueryString +
+        paginationQueryString
     );
-    return response.data;
+    const totalCount = response.headers['x-total-count'];
+    return { data: response.data, totalItems: totalCount };
   } catch (error) {
     console.log(error);
     throw error;
