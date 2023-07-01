@@ -6,6 +6,7 @@ import { RadioGroup } from '@headlessui/react';
 import axios from 'axios';
 import { Skeleton, Spin } from 'antd';
 import getSingleProductDetails from '@/Api/getSingleProductDetails';
+import Navbar from '../Navbar';
 
 const colors = [
   { name: 'White', class: 'bg-white', selectedClass: 'ring-gray-400' },
@@ -55,8 +56,13 @@ export default function Index(props: any) {
       setProductDetailsLoader(false);
     }
   };
+  const handleAddToCart=()=>{
+    
+  }
   return (
     <>
+      <Navbar />
+
       {productDetailsLoader ? (
         <Skeleton active />
       ) : (
@@ -91,13 +97,13 @@ export default function Index(props: any) {
                     </li>
                   ))}
                 <li className="text-sm">
-                  <a
-                    href={product.href}
+                  <div
+                    // href={product.href}
                     aria-current="page"
-                    className="font-medium text-gray-500 hover:text-gray-600"
+                    className="text-3xl text-gray-500 hover:text-gray-600"
                   >
                     {product.title}
-                  </a>
+                  </div>
                 </li>
               </ol>
             </nav>
@@ -302,6 +308,7 @@ export default function Index(props: any) {
                   </div>
 
                   <button
+                  onClick={handleAddToCart}
                     type="submit"
                     className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                   >
