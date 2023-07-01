@@ -3,9 +3,8 @@ import Navbar from '@/Components/Navbar';
 export default function Home() {
   return (
       <div>
-        <Navbar>
-          <Category_Filter></Category_Filter>
-        </Navbar>
+        <Navbar />
+        <Category_Filter />
       </div>
   );
 }

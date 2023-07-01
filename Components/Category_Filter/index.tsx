@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Disclosure, Menu, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import {
@@ -11,50 +11,14 @@ import {
   Squares2X2Icon,
 } from '@heroicons/react/20/solid';
 import ProductList from '../ProductList';
+import axios from 'axios';
+import getAllCategories from '@/Api/getAllCategories';
+import getAllBrands from '@/Api/getAllBrands';
 
 const sortOptions = [
-  { name: 'Most Popular', href: '#', current: true },
-  { name: 'Best Rating', href: '#', current: false },
-  { name: 'Newest', href: '#', current: false },
-  { name: 'Price: Low to High', href: '#', current: false },
-  { name: 'Price: High to Low', href: '#', current: false },
-];
-const filters = [
-  {
-    id: 'color',
-    name: 'Color',
-    options: [
-      { value: 'white', label: 'White', checked: false },
-      { value: 'beige', label: 'Beige', checked: false },
-      { value: 'blue', label: 'Blue', checked: true },
-      { value: 'brown', label: 'Brown', checked: false },
-      { value: 'green', label: 'Green', checked: false },
-      { value: 'purple', label: 'Purple', checked: false },
-    ],
-  },
-  {
-    id: 'category',
-    name: 'Category',
-    options: [
-      { value: 'new-arrivals', label: 'New Arrivals', checked: false },
-      { value: 'sale', label: 'Sale', checked: false },
-      { value: 'travel', label: 'Travel', checked: true },
-      { value: 'organization', label: 'Organization', checked: false },
-      { value: 'accessories', label: 'Accessories', checked: false },
-    ],
-  },
-  {
-    id: 'size',
-    name: 'Size',
-    options: [
-      { value: '2l', label: '2L', checked: false },
-      { value: '6l', label: '6L', checked: false },
-      { value: '12l', label: '12L', checked: false },
-      { value: '18l', label: '18L', checked: false },
-      { value: '20l', label: '20L', checked: false },
-      { value: '40l', label: '40L', checked: true },
-    ],
-  },
+  { name: 'Best Rating', sort: 'rating', order: 'desc', current: false },
+  { name: 'Price: Low to High', sort: 'price', order: 'asc', current: false },
+  { name: 'Price: High to Low', sort: 'price', order: 'desc', current: false },
 ];
 
 function classNames(...classes: any) {
@@ -62,7 +26,65 @@ function classNames(...classes: any) {
 }
 export default function Category_Filter() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [filter, setFilter] = useState({});
+  const [sort, setSort] = useState({});
 
+  const handleFilters = (e: any, option: any, section: any) => {
+    const newFilter: any = { ...filter };
+    // const newfilter = { ...filter, [section?.id]: option?.value };
+    if (e.target.checked) {
+      if (newFilter[section?.id]) {
+        newFilter[section?.id].push(option?.value);
+      } else {
+        newFilter[section?.id] = [option?.value];
+      }
+    } else {
+      const index = newFilter[section.id].findIndex(
+        (el: any) => el === option?.value
+      );
+      newFilter[section?.id].splice(index, 1);
+    }
+
+    setFilter(newFilter);
+  };
+  const handleSort = (e: any, option: any) => {
+    const newSort = { ...sort, _sort: option.sort, _order: option.order };
+    setSort(newSort);
+  };
+  const [categories, setCategories] = useState([]) as any;
+  const [brands, setBrands] = useState([]) as any;
+  const filters = [
+    {
+      id: 'category',
+      name: 'Category',
+      options: categories,
+    },
+    {
+      id: 'brand',
+      name: 'Brand',
+      options: brands,
+    },
+  ];
+  useEffect(() => {
+    handleGetAllCategories();
+    handleGetAllBrands();
+  }, []);
+  const handleGetAllCategories = async () => {
+    try {
+      const categories = await getAllCategories();
+      setCategories(categories);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleGetAllBrands = async () => {
+    try {
+      const brands = await getAllBrands();
+      setBrands(brands);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="bg-white">
       <div>
@@ -142,27 +164,29 @@ export default function Category_Filter() {
                             </h3>
                             <Disclosure.Panel className="pt-6">
                               <div className="space-y-6">
-                                {section.options.map((option, optionIdx) => (
-                                  <div
-                                    key={option.value}
-                                    className="flex items-center"
-                                  >
-                                    <input
-                                      id={`filter-mobile-${section.id}-${optionIdx}`}
-                                      name={`${section.id}[]`}
-                                      defaultValue={option.value}
-                                      type="checkbox"
-                                      defaultChecked={option.checked}
-                                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                    />
-                                    <label
-                                      htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
-                                      className="ml-3 min-w-0 flex-1 text-gray-500"
+                                {section.options.map(
+                                  (option: any, optionIdx: any) => (
+                                    <div
+                                      key={option?.value}
+                                      className="flex items-center"
                                     >
-                                      {option.label}
-                                    </label>
-                                  </div>
-                                ))}
+                                      <input
+                                        id={`filter-mobile-${section.id}-${optionIdx}`}
+                                        name={`${section.id}[]`}
+                                        defaultValue={option?.value}
+                                        type="checkbox"
+                                        defaultChecked={option?.checked}
+                                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                      />
+                                      <label
+                                        htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
+                                        className="ml-3 min-w-0 flex-1 text-gray-500"
+                                      >
+                                        {option?.label}
+                                      </label>
+                                    </div>
+                                  )
+                                )}
                               </div>
                             </Disclosure.Panel>
                           </>
@@ -179,7 +203,7 @@ export default function Category_Filter() {
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-             All Products
+              All Products
             </h1>
 
             <div className="flex items-center">
@@ -208,8 +232,8 @@ export default function Category_Filter() {
                       {sortOptions.map((option) => (
                         <Menu.Item key={option.name}>
                           {({ active }) => (
-                            <a
-                              href={option.href}
+                            <p
+                              onClick={(e) => handleSort(e, option)}
                               className={classNames(
                                 option.current
                                   ? 'font-medium text-gray-900'
@@ -219,7 +243,7 @@ export default function Category_Filter() {
                               )}
                             >
                               {option.name}
-                            </a>
+                            </p>
                           )}
                         </Menu.Item>
                       ))}
@@ -284,27 +308,32 @@ export default function Category_Filter() {
                         </h3>
                         <Disclosure.Panel className="pt-6">
                           <div className="space-y-4">
-                            {section.options.map((option, optionIdx) => (
-                              <div
-                                key={option.value}
-                                className="flex items-center"
-                              >
-                                <input
-                                  id={`filter-${section.id}-${optionIdx}`}
-                                  name={`${section.id}[]`}
-                                  defaultValue={option.value}
-                                  type="checkbox"
-                                  defaultChecked={option.checked}
-                                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                />
-                                <label
-                                  htmlFor={`filter-${section.id}-${optionIdx}`}
-                                  className="ml-3 text-sm text-gray-600"
+                            {section.options.map(
+                              (option: any, optionIdx: any) => (
+                                <div
+                                  key={option?.value}
+                                  className="flex items-center"
                                 >
-                                  {option.label}
-                                </label>
-                              </div>
-                            ))}
+                                  <input
+                                    id={`filter-${section.id}-${optionIdx}`}
+                                    name={`${section.id}[]`}
+                                    defaultValue={option?.value}
+                                    type="checkbox"
+                                    defaultChecked={option?.checked}
+                                    onChange={(e) =>
+                                      handleFilters(e, option, section)
+                                    }
+                                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                  />
+                                  <label
+                                    htmlFor={`filter-${section.id}-${optionIdx}`}
+                                    className="ml-3 text-sm text-gray-600"
+                                  >
+                                    {option?.label}
+                                  </label>
+                                </div>
+                              )
+                            )}
                           </div>
                         </Disclosure.Panel>
                       </>
@@ -315,7 +344,7 @@ export default function Category_Filter() {
 
               {/* Product grid */}
               <div className="lg:col-span-3">
-                <ProductList />
+                <ProductList filter={filter} sort={sort} />
               </div>
             </div>
           </section>

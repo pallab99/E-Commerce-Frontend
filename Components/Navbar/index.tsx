@@ -7,6 +7,7 @@ import {
   ShoppingCartIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
+import { useRouter, usePathname } from 'next/navigation';
 
 const user = {
   name: 'Tom Cook',
@@ -30,21 +31,26 @@ const userNavigation = [
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ');
 }
-export default function Navbar({ children }: any) {
+export default function Navbar(props: any) {
+  const router = useRouter();
+  const path = usePathname();
   return (
     <>
-      <div className="min-h-full">
+      <div className="">
         <Disclosure as="nav" className="bg-gray-800">
           {({ open }) => (
             <>
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="flex h-16 items-center justify-between">
                   <div className="flex items-center">
-                    <div className="flex-shrink-0">
+                    <div className="flex-shrink-0 hover:cursor-pointer">
                       <img
                         className="h-8 w-8"
                         src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                        alt="Your Company"
+                        alt="Urban Bazar"
+                        onClick={() => {
+                          router.push('/');
+                        }}
                       />
                     </div>
                     <div className="hidden md:block">
@@ -77,9 +83,12 @@ export default function Navbar({ children }: any) {
                         <ShoppingCartIcon
                           className="h-6 w-6"
                           aria-hidden="true"
+                          onClick={() => {
+                            router.push('/cart');
+                          }}
                         />
                       </button>
-                      <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 mb-7 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                      <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 mb-7 ml-0text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
                         3
                       </span>
                       {/* Profile dropdown */}
@@ -188,9 +197,12 @@ export default function Navbar({ children }: any) {
                       <ShoppingCartIcon
                         className="h-6 w-6"
                         aria-hidden="true"
+                        onClick={() => {
+                          router.push('/cart');
+                        }}
                       />
                     </button>
-                    <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 mb-7 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                    <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 mb-7 ml-10 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
                       3
                     </span>
                   </div>
@@ -212,18 +224,20 @@ export default function Navbar({ children }: any) {
           )}
         </Disclosure>
 
-        <header className="bg-white shadow">
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-            Trendify
-            </h1>
-          </div>
-        </header>
-        <main>
+        {path.includes('/checkout') ? null : (
+          <header className="bg-white shadow">
+            <div className="mx-auto max-w-7xl px-4 pt-5 pb-5 sm:px-6 lg:px-8">
+              <h1 className="text-4xl font-bold tracking-tight text-gray-900">
+                Urban Bazar
+              </h1>
+            </div>
+          </header>
+        )}
+        {/* <main>
           <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-            {children}
+            {props?.children}
           </div>
-        </main>
+        </main> */}
       </div>
     </>
   );
