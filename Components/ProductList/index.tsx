@@ -4,61 +4,29 @@ import {
   ChevronRightIcon,
   StarIcon,
 } from '@heroicons/react/20/solid';
-import axios from 'axios';
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Loader from '../Loader';
-import { Spin } from 'antd';
-
+import { Spin, message } from 'antd';
+import getAllProducts from '@/Api/getAllProducts';
 export default function ProductList(props: any) {
   useEffect(() => {
-    getAllProducts();
+    handleGetAllProducts();
   }, [props.filter, props.sort]);
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]) as any;
   const [allProductsLoader, setAllProductsLoader] = useState(true);
 
-  const getAllProducts = () => {
-    setAllProductsLoader(true);
-    console.log(props?.filter);
-
-    let queryString = '';
-    for (let key in props?.filter) {
-      queryString += `${key}=${props?.filter[key]}&`;
-      const categoryValues = props?.filter[key];
-      if (categoryValues.length) {
-        const lastCategoryValue = categoryValues[categoryValues.length - 1];
-        queryString += `${key}=${lastCategoryValue}&`;
-      }
+  const handleGetAllProducts = async () => {
+    try {
+      setAllProductsLoader(true);
+      const products = await getAllProducts(props);
+      setProducts(products);
+      setAllProductsLoader(false);
+    } catch (error) {
+      message.error("Can't load products")
+      setAllProductsLoader(false);
     }
-    let sortQueryString = '';
-    for (let key in props?.sort) {
-      sortQueryString += `${key}=${props?.sort[key]}&`;
-    }
-    const isCategoryEmpty =
-      !props?.filter?.category ||
-      Object.keys(props.filter.category).length === 0;
-    const isBrandEmpty =
-      !props?.filter?.brand || Object.keys(props.filter.brand).length === 0;
-
-    if (isCategoryEmpty) {
-      queryString = queryString.replace('category=&', '');
-    }
-
-    if (isBrandEmpty) {
-      queryString = queryString.replace('brand=&', '');
-    }
-
-    axios
-      .get('http://localhost:8080/products?' + queryString + sortQueryString)
-      .then((res) => {
-        setProducts(res.data);
-        setAllProductsLoader(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setAllProductsLoader(false);
-      });
   };
 
   const router = useRouter();
@@ -66,10 +34,7 @@ export default function ProductList(props: any) {
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-0 sm:px-6 sm:py-0 lg:max-w-7xl lg:px-8">
         {allProductsLoader ? (
-          <Spin
-            size="large"
-            className="flex justify-center my-3 text-4xl"
-          ></Spin>
+          <Spin size="large" className='flex justify-center py-10'></Spin>
         ) : (
           <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
             {products?.map((product: any) => (
