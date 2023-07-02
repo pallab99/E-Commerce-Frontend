@@ -8,7 +8,6 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { logInUser } from '@/Redux/Auth/authSlice';
 import { message } from 'antd';
-
 export default function Page() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -27,7 +26,9 @@ export default function Page() {
       );
 
       const LoggedInUserData = response.data[0];
-      dispatch(logInUser(LoggedInUserData));
+      localStorage.setItem('userInfo', JSON.stringify(LoggedInUserData));
+      // dispatch(logInUser(LoggedInUserData));
+
       message.success('Login successful');
       router.push('/');
     } catch (error) {

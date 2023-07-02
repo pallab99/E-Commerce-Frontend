@@ -84,7 +84,7 @@ export default function Navbar(props: any) {
                           className="h-6 w-6"
                           aria-hidden="true"
                           onClick={() => {
-                            router.push('/cart');
+                              router.push('/cart');
                           }}
                         />
                       </button>
