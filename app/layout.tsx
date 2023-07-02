@@ -1,6 +1,7 @@
 // "use client"
 import { ReduxProvider } from '@/Redux/provider';
 import './globals.css';
+import { CookiesProvider } from 'react-cookie';
 
 export const metadata = {
   title: 'Urban Bazar',
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-gray-100">
+        {/* <CookiesProvider> */}
         <ReduxProvider>{children}</ReduxProvider>
+        {/* </CookiesProvider> */}
       </body>
     </html>
   );
