@@ -1,3 +1,5 @@
+// "use client"
+import { ReduxProvider } from '@/Redux/provider';
 import './globals.css';
 
 export const metadata = {
@@ -12,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-gray-100">{children}</body>
+      <body className="bg-gray-100">
+        <ReduxProvider>{children}</ReduxProvider>
+      </body>
     </html>
   );
 }
