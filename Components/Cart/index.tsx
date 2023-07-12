@@ -4,10 +4,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import getCartItems from '@/Api/getCartItemsByUserId';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { removeItems } from '@/Redux/Cart/cartSlice';
 
 export default function Index() {
   const router = useRouter();
   const [products, setProducts] = useState() as any;
+  const dispatch = useDispatch();
   useEffect(() => {
     const userId = localStorage.getItem('userInfo');
     if (userId) {
@@ -20,17 +24,58 @@ export default function Index() {
       setProducts(response?.items);
     } catch (error: any) {}
   };
-  
+  const handleRemoveItems = async (e: any, itemId: any) => {
+    e.preventDefault();
+    try {
+      const response = await axios.delete(
+        `http://localhost:8080/cart/${itemId}`
+      );
+      const remainItems = products?.filter((item: any) => {
+        return item.id != itemId;
+      });
+      dispatch(removeItems());
+      setProducts(remainItems);
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  };
+  const handleQuantity = async (e: any, product: any) => {
+    e.preventDefault();
+    try {
+      const data = { ...product, quantity: e.target.value };
+      const response = await axios.put(
+        `http://localhost:8080/cart/${data.id}`,
+        data
+      );
+
+      const updatedItems = products.map((item: any) => {
+        if (item.id === response.data.id) {
+          item.quantity = e.target.value;
+        }
+        return item;
+      });
+      setProducts(updatedItems);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const getTotalAmount = () => {
     let totalAmount = 0;
-
     for (let i = 0; i < products?.length; i++) {
       totalAmount += products[i]?.product?.price * products[i]?.quantity;
     }
-
     return totalAmount;
   };
-
+  const getTotalItems = () => {
+    let totalItems = 0;
+    for (let i = 0; i < products?.length; i++) {
+      totalItems += +products[i]?.quantity;
+    }
+    return totalItems;
+  };
+  const getItemPrice = (product: any) => {
+    return product?.product.price * product?.quantity;
+  };
   return (
     <>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 bg-white mt-8">
@@ -58,7 +103,7 @@ export default function Index() {
                               {product.product.title}
                             </a>
                           </h3>
-                          <p className="ml-4">${product.product.price}</p>
+                          <p className="ml-4">${getItemPrice(product)}</p>
                         </div>
                         <p className="mt-1 text-sm text-gray-500">
                           {product.product.brand}
@@ -72,9 +117,16 @@ export default function Index() {
                           >
                             QTY
                           </label>
-                          <select>
+                          <select
+                            onChange={(e) => handleQuantity(e, product)}
+                            defaultValue={product?.quantity}
+                          >
                             <option value="1">1</option>
                             <option value="2">2</option>
+                            <option value="4">4</option>
+                            <option value="6">6</option>
+                            <option value="8">8</option>
+                            <option value="10">10</option>
                           </select>
                         </div>
 
@@ -82,6 +134,7 @@ export default function Index() {
                           <button
                             type="button"
                             className="font-medium text-indigo-600 hover:text-indigo-500"
+                            onClick={(e) => handleRemoveItems(e, product.id)}
                           >
                             Remove
                           </button>
@@ -98,6 +151,10 @@ export default function Index() {
           <div className="flex justify-between text-base font-medium text-gray-900">
             <p>Subtotal</p>
             <p>${getTotalAmount()}</p>
+          </div>
+          <div className="flex justify-between text-base font-medium text-gray-900">
+            <p>Total Items In Cart</p>
+            <p>{getTotalItems()} items</p>
           </div>
           <p className="mt-0.5 text-sm text-gray-500">
             Shipping and taxes calculated at checkout.

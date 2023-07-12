@@ -40,12 +40,13 @@ export default function Navbar(props: any) {
   const path = usePathname();
   const [cartProducts, setCartProducts] = useState() as any;
   const itemsAddedCart=useSelector((state:RootState)=>state.cart.addedToCart)
+  const itemsRemovedCart=useSelector((state:RootState)=>state.cart.removeFromCart)
   useEffect(() => {
     const userId = localStorage.getItem('userInfo');
     if (userId) {
       handleGetCartItems(userId);
     }
-  },[itemsAddedCart]);
+  },[itemsAddedCart,itemsRemovedCart]);
   const handleGetCartItems = async (userId: any) => {
     try {
       const response = await getCartItems(userId);
