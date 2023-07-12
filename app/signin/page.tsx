@@ -26,7 +26,9 @@ export default function Page() {
       );
 
       const LoggedInUserData = response.data[0];
-      localStorage.setItem('userInfo', JSON.stringify(LoggedInUserData));
+      console.log(LoggedInUserData);
+      
+      localStorage.setItem('userInfo', JSON.stringify(LoggedInUserData?.id));
       // dispatch(logInUser(LoggedInUserData));
 
       message.success('Login successful');

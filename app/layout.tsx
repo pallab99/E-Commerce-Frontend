@@ -1,8 +1,6 @@
-// "use client"
 import { ReduxProvider } from '@/Redux/provider';
 import './globals.css';
-import { CookiesProvider } from 'react-cookie';
-
+import CartItems from '@/Components/CartItems'
 export const metadata = {
   title: 'Urban Bazar',
   description: 'Shop all trendy pieces today',
@@ -13,12 +11,16 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // const [cartItems, setCartItems] = useState();
+ 
   return (
     <html lang="en">
       <body className="bg-gray-100">
-        {/* <CookiesProvider> */}
-        <ReduxProvider>{children}</ReduxProvider>
-        {/* </CookiesProvider> */}
+        <ReduxProvider>
+          <CartItems>
+          {children}
+          </CartItems>
+        </ReduxProvider>
       </body>
     </html>
   );

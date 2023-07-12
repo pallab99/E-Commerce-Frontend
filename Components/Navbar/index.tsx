@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import {
   Bars3Icon,
@@ -8,6 +8,10 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { useRouter, usePathname } from 'next/navigation';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/Redux/store';
+import getCartItems from '@/Api/getCartItemsByUserId';
+import { Skeleton } from 'antd';
 
 const user = {
   name: 'Tom Cook',
@@ -34,6 +38,23 @@ function classNames(...classes: any) {
 export default function Navbar(props: any) {
   const router = useRouter();
   const path = usePathname();
+  const [cartProducts, setCartProducts] = useState() as any;
+  const itemsAddedCart=useSelector((state:RootState)=>state.cart.addedToCart)
+  useEffect(() => {
+    const userId = localStorage.getItem('userInfo');
+    if (userId) {
+      handleGetCartItems(userId);
+    }
+  },[itemsAddedCart]);
+  const handleGetCartItems = async (userId: any) => {
+    try {
+      const response = await getCartItems(userId);
+      console.log(response?.items);
+      setCartProducts(response?.items);
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  };
   return (
     <>
       <div className="">
@@ -84,12 +105,12 @@ export default function Navbar(props: any) {
                           className="h-6 w-6"
                           aria-hidden="true"
                           onClick={() => {
-                              router.push('/cart');
+                            router.push('/cart');
                           }}
                         />
                       </button>
                       <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 mb-7 ml-0text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-                        3
+                        {cartProducts?.length}
                       </span>
                       {/* Profile dropdown */}
                       <Menu as="div" className="relative ml-3">
@@ -202,9 +223,13 @@ export default function Navbar(props: any) {
                         }}
                       />
                     </button>
-                    <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 mb-7 ml-10 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-                      3
-                    </span>
+                    {!cartProducts?.length ? (
+                      <Skeleton active></Skeleton>
+                    ) : (
+                      <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 mb-7 ml-10 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                        {cartProducts?.length}
+                      </span>
+                    )}
                   </div>
                   <div className="mt-3 space-y-1 px-2">
                     {userNavigation.map((item) => (

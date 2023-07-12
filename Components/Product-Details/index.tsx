@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react';
 import { StarIcon } from '@heroicons/react/20/solid';
 import { RadioGroup } from '@headlessui/react';
 import axios from 'axios';
-import { Skeleton, Spin } from 'antd';
+import { Skeleton, Spin, message } from 'antd';
 import getSingleProductDetails from '@/Api/getSingleProductDetails';
 import Navbar from '../Navbar';
-
+import addToCart from '@/Api/addToCart';
+import { useDispatch } from 'react-redux';
+import { cartItems } from '@/Redux/Cart/cartSlice';
 const colors = [
   { name: 'White', class: 'bg-white', selectedClass: 'ring-gray-400' },
   { name: 'Gray', class: 'bg-gray-200', selectedClass: 'ring-gray-400' },
@@ -56,9 +58,13 @@ export default function Index(props: any) {
       setProductDetailsLoader(false);
     }
   };
-  const handleAddToCart=()=>{
-    
-  }
+  const dispatch=useDispatch();
+  const handleAddToCart = async (e: any) => {
+    e.preventDefault();
+    addToCart(product);
+    dispatch(cartItems());
+  };
+
   return (
     <>
       <Navbar />
@@ -308,8 +314,8 @@ export default function Index(props: any) {
                   </div>
 
                   <button
-                  onClick={handleAddToCart}
-                    type="submit"
+                    onClick={handleAddToCart}
+                    // type="submit"
                     className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                   >
                     Add to cart
