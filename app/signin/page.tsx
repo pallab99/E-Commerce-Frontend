@@ -3,14 +3,12 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { logInUser } from '@/Redux/Auth/authSlice';
 import { message } from 'antd';
 export default function Page() {
   const router = useRouter();
-  const dispatch = useDispatch();
+
   const {
     register,
     handleSubmit,
