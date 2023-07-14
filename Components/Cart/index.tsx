@@ -1,17 +1,21 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import getCartItems from '@/Api/getCartItemsByUserId';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { removeItems } from '@/Redux/Cart/cartSlice';
+import { orderedProducts, userId } from '@/Redux/Order/orderSlice';
+import { message } from 'antd';
 
 export default function Index() {
   const router = useRouter();
+  const path = usePathname();
   const [products, setProducts] = useState() as any;
   const dispatch = useDispatch();
+
   useEffect(() => {
     const userId = localStorage.getItem('userInfo');
     if (userId) {
@@ -21,6 +25,8 @@ export default function Index() {
   const handleGetCartItems = async (userId: any) => {
     try {
       const response = await getCartItems(userId);
+      console.log("xxxx",response?.items);
+      
       setProducts(response?.items);
     } catch (error: any) {}
   };
@@ -76,6 +82,18 @@ export default function Index() {
   const getItemPrice = (product: any) => {
     return product?.product.price * product?.quantity;
   };
+
+  const orderDetails = useSelector((state: any) => state.order.orderDetails);
+  const handleOrder = () => {
+    if (orderDetails.address==='') {
+      message.error("Please add an address")
+    }else{
+      dispatch(orderedProducts(products));  
+      dispatch(userId(products[0]?.user))
+      message.success('Done');
+    }
+  };
+  console.log('111111', orderDetails);
   return (
     <>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 bg-white mt-8">
@@ -160,12 +178,21 @@ export default function Index() {
             Shipping and taxes calculated at checkout.
           </p>
           <div className="mt-6">
-            <Link
-              href="/checkout"
-              className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-            >
-              Checkout
-            </Link>
+            {!path.includes('checkout') ? (
+              <Link
+                href="/checkout"
+                className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+              >
+                Checkout
+              </Link>
+            ) : (
+              <div
+                onClick={handleOrder}
+                className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 cursor-pointer"
+              >
+                Order and pay
+              </div>
+            )}
           </div>
           <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
             <p>

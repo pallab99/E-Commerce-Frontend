@@ -1,10 +1,71 @@
-import React from 'react';
+import { userAddress, paymentMethod } from '@/Redux/Order/orderSlice';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function Index(props: any) {
+  const [addresses, setAddresses] = useState<any>([]);
+  const [handleOrderClicked, setHandleOrderClicked] = useState<number>(0);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('cash');
+  const dispatch = useDispatch();
+ 
+  
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm();
+  useEffect(() => {
+    const userId = localStorage.getItem('userInfo');
+    getUserAddress(userId);
+  }, [handleOrderClicked]);
+  const handleAddAddress = async (data: any) => {
+    try {
+      const userId = localStorage.getItem('userInfo');
+      const address = [...addresses, data];
+      const response = await axios.patch(
+        `http://localhost:8080/users/${userId}`,
+        { addresses: address }
+      );
+      reset();
+      setHandleOrderClicked(handleOrderClicked + 1);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getUserAddress = async (userId: any) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/users/${userId}`);
+      // console.log([response.data]);
+      setAddresses(response.data.addresses);
+    } catch (error) {}
+  };
+
+  const handleSelectedAddress = (e: any) => {
+    const idx = e.target.value;
+    setSelectedAddress(addresses[idx]);
+    dispatch(userAddress({...addresses[idx]}));
+  };
+  const handleSelectedPaymentMethod = (e: any) => {
+    setSelectedPaymentMethod(e.target.value);
+    dispatch(paymentMethod(e.target.value));
+  };
+
   return (
     <>
       <div className="lg:col-span-3 mb-10">
-        <form className="bg-white px-5 py-12 mt-12">
+        <form
+          className="bg-white px-5 py-12 mt-12"
+          noValidate
+          onSubmit={handleSubmit((data: any) => {
+            handleAddAddress(data);
+          })}
+        >
           <div className="space-y-5">
             <div className="border-b border-gray-900/10 pb-12">
               <h2 className="text-2xl font-semibold leading-7 text-gray-900">
@@ -15,43 +76,25 @@ export default function Index(props: any) {
               </p>
 
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div className="sm:col-span-3">
+                <div className="sm:col-span-12">
                   <label
-                    htmlFor="first-name"
+                    htmlFor="name"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    First name
+                    Full name
                   </label>
                   <div className="mt-2">
                     <input
                       type="text"
-                      name="first-name"
-                      id="first-name"
-                      autoComplete="given-name"
+                      id="name"
+                      {...register('name', { required: 'name is required' })}
+                      autoComplete="name"
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
 
-                <div className="sm:col-span-3">
-                  <label
-                    htmlFor="last-name"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Last name
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      name="last-name"
-                      id="last-name"
-                      autoComplete="family-name"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-4 md:col-span-6">
+                <div className="sm:col-span-4 md:col-span-12">
                   <label
                     htmlFor="email"
                     className="block text-sm font-medium leading-6 text-gray-900"
@@ -61,36 +104,33 @@ export default function Index(props: any) {
                   <div className="mt-2">
                     <input
                       id="email"
-                      name="email"
                       type="email"
+                      {...register('email', { required: 'email is required' })}
                       autoComplete="email"
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
 
-                <div className="sm:col-span-3 md:col-span-10">
+                <div className="sm:col-span-4 md:col-span-12">
                   <label
-                    htmlFor="country"
+                    htmlFor="phone"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    Country
+                    Phone Number
                   </label>
-                  <div className="mt-2 md:col-span-6 lg:col-span-10">
-                    <select
-                      id="country"
-                      name="country"
-                      autoComplete="country-name"
-                      className=" w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                    >
-                      <option>United States</option>
-                      <option>Canada</option>
-                      <option>Mexico</option>
-                    </select>
+                  <div className="mt-2">
+                    <input
+                      id="phone"
+                      type="tel"
+                      {...register('phone', { required: 'phone is required' })}
+                      autoComplete="phone"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
                   </div>
                 </div>
 
-                <div className="col-span-full">
+                <div className="col-span-full md:col-span-12 lg:col-span-12">
                   <label
                     htmlFor="street-address"
                     className="block text-sm font-medium leading-6 text-gray-900"
@@ -100,7 +140,9 @@ export default function Index(props: any) {
                   <div className="mt-2">
                     <input
                       type="text"
-                      name="street-address"
+                      {...register('street', {
+                        required: 'street address is required',
+                      })}
                       id="street-address"
                       autoComplete="street-address"
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -108,7 +150,7 @@ export default function Index(props: any) {
                   </div>
                 </div>
 
-                <div className="sm:col-span-2 sm:col-start-1">
+                <div className="sm:col-span-2 lg:col-span-3">
                   <label
                     htmlFor="city"
                     className="block text-sm font-medium leading-6 text-gray-900"
@@ -118,7 +160,7 @@ export default function Index(props: any) {
                   <div className="mt-2">
                     <input
                       type="text"
-                      name="city"
+                      {...register('city', { required: 'city is required' })}
                       id="city"
                       autoComplete="address-level2"
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -126,9 +168,9 @@ export default function Index(props: any) {
                   </div>
                 </div>
 
-                <div className="sm:col-span-2">
+                <div className="sm:col-span-2 lg:col-span-3">
                   <label
-                    htmlFor="region"
+                    htmlFor="state"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
                     State / Province
@@ -136,17 +178,17 @@ export default function Index(props: any) {
                   <div className="mt-2">
                     <input
                       type="text"
-                      name="region"
-                      id="region"
+                      {...register('state', { required: 'state is required' })}
+                      id="state"
                       autoComplete="address-level1"
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
 
-                <div className="sm:col-span-2">
+                <div className="sm:col-span-2 lg:col-span-3">
                   <label
-                    htmlFor="postal-code"
+                    htmlFor="pinCode"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
                     ZIP / Postal code
@@ -154,9 +196,11 @@ export default function Index(props: any) {
                   <div className="mt-2">
                     <input
                       type="text"
-                      name="postal-code"
-                      id="postal-code"
-                      autoComplete="postal-code"
+                      {...register('pinCode', {
+                        required: 'street address is required',
+                      })}
+                      id="pinCode"
+                      autoComplete="pinCode"
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
@@ -187,39 +231,42 @@ export default function Index(props: any) {
                 Choose from Existing addresses
               </p>
               <ul role="list">
-                {props?.addresses.map((address: any) => (
-                  <li
-                    key={address?.name}
-                    className="flex justify-between gap-x-6 px-5 py-5 border-solid border-2 border-gray-200 mb-3"
-                  >
-                    <div className="flex gap-x-4">
-                      <input
-                        name="address"
-                        type="radio"
-                        className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                      />
-                      <div className="min-w-0 flex-auto">
-                        <p className="text-sm font-semibold leading-6 text-gray-900">
-                          {address.name}
+                {addresses &&
+                  addresses?.map((item: any, index: number) => (
+                    <li
+                      key={item?.id}
+                      className="flex justify-between gap-x-6 px-5 py-5 border-solid border-2 border-gray-200 mb-3 text-black"
+                    >
+                      <div className="flex gap-x-4">
+                        <input
+                          onChange={handleSelectedAddress}
+                          name="address"
+                          type="radio"
+                          value={index}
+                          className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                        />
+                        <div className="min-w-0 flex-auto">
+                          <p className="text-sm font-semibold leading-6 text-gray-900">
+                            {item?.name}
+                          </p>
+                          <p className="mt-1 truncate text-xs leading-5 text-gray-500">
+                            {item?.street}
+                          </p>
+                          <p className="mt-1 truncate text-xs leading-5 text-gray-500">
+                            {item?.pinCode}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="hidden sm:flex sm:flex-col sm:items-end">
+                        <p className="text-sm leading-6 text-gray-900">
+                          Phone: {item?.phone}
                         </p>
-                        <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                          {address.street}
-                        </p>
-                        <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                          {address.pinCode}
+                        <p className="text-sm leading-6 text-gray-500">
+                          {item?.city}
                         </p>
                       </div>
-                    </div>
-                    <div className="hidden sm:flex sm:flex-col sm:items-end">
-                      <p className="text-sm leading-6 text-gray-900">
-                        Phone: {address.phone}
-                      </p>
-                      <p className="text-sm leading-6 text-gray-500">
-                        {address.city}
-                      </p>
-                    </div>
-                  </li>
-                ))}
+                    </li>
+                  ))}
               </ul>
 
               <div className="mt-10 space-y-10">
@@ -233,9 +280,12 @@ export default function Index(props: any) {
                   <div className="mt-6 space-y-6">
                     <div className="flex items-center gap-x-3">
                       <input
+                        onChange={handleSelectedPaymentMethod}
                         id="cash"
                         name="payments"
                         type="radio"
+                        value={'cash'}
+                        checked={selectedPaymentMethod === 'cash'}
                         className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                       />
                       <label
@@ -247,9 +297,12 @@ export default function Index(props: any) {
                     </div>
                     <div className="flex items-center gap-x-3">
                       <input
+                        onChange={handleSelectedPaymentMethod}
                         id="card"
                         name="payments"
                         type="radio"
+                        value={'card'}
+                        checked={selectedPaymentMethod === 'card'}
                         className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                       />
                       <label

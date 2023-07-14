@@ -2345,7 +2345,54 @@
       "email": "test@gmail.com",
       "password": "123",
       "confirmPassword": "123",
-      "id": 2
+      "id": 2,
+      "addresses": [
+        {
+          "name": "Pallab Majumdar",
+          "email": "majumdarp79@gmail.com",
+          "phone": "01984101170",
+          "street": "Mirpur,Dhaka",
+          "city": "jashore",
+          "state": "jashore",
+          "pinCode": "69"
+        },
+        {
+          "name": "Pallab Majumdar",
+          "email": "majumdarp79@gmail.com",
+          "phone": "01984101170",
+          "street": "Mirpur,Dhaka",
+          "city": "Dhaka",
+          "state": "xxx",
+          "pinCode": "12345"
+        },
+        {
+          "name": "Pallab Majumdar",
+          "email": "majumdarp79@gmail.com",
+          "phone": "01984101170",
+          "street": "Mirpur,Dhaka",
+          "city": "Dhaka",
+          "state": "zrtc",
+          "pinCode": "6969"
+        },
+        {
+          "name": "Pallab Majumdar",
+          "email": "majumdarp79@gmail.com",
+          "phone": "01984101170",
+          "street": "Mirpur,Dhaka",
+          "city": "Dhaka",
+          "state": "misonary",
+          "pinCode": "696969"
+        },
+        {
+          "name": "Pallab Majumdar",
+          "email": "majumdarp79@gmail.com",
+          "phone": "01984101170",
+          "street": "Mirpur,Dhaka",
+          "city": "Dhaka",
+          "state": "blow",
+          "pinCode": "1234567890"
+        }
+      ]
     }
   ],
   "cart": [
@@ -2392,7 +2439,7 @@
           "https://i.dummyjson.com/data/products/1/thumbnail.jpg"
         ]
       },
-      "quantity": "4",
+      "quantity": "1",
       "user": "2",
       "id": 26
     },
@@ -2415,31 +2462,9 @@
           "https://i.dummyjson.com/data/products/2/thumbnail.jpg"
         ]
       },
-      "quantity": "6",
+      "quantity": "1",
       "user": "2",
       "id": 27
-    },
-    {
-      "product": {
-        "id": 5,
-        "title": "Huawei P30",
-        "description": "Huawei’s re-badged P30 Pro New Edition was officially unveiled yesterday in Germany and now the device has made its way to the UK.",
-        "price": 499,
-        "discountPercentage": 10.58,
-        "rating": 4.09,
-        "stock": 32,
-        "brand": "Huawei",
-        "category": "smartphones",
-        "thumbnail": "https://i.dummyjson.com/data/products/5/thumbnail.jpg",
-        "images": [
-          "https://i.dummyjson.com/data/products/5/1.jpg",
-          "https://i.dummyjson.com/data/products/5/2.jpg",
-          "https://i.dummyjson.com/data/products/5/3.jpg"
-        ]
-      },
-      "quantity": "2",
-      "user": "2",
-      "id": 28
     }
   ]
 }
