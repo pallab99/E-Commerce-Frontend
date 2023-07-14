@@ -7,7 +7,7 @@ import getCartItems from '@/Api/getCartItemsByUserId';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeItems } from '@/Redux/Cart/cartSlice';
-import { orderedProducts } from '@/Redux/Order/orderSlice';
+import { orderedProducts, userId } from '@/Redux/Order/orderSlice';
 import { message } from 'antd';
 
 export default function Index() {
@@ -25,6 +25,8 @@ export default function Index() {
   const handleGetCartItems = async (userId: any) => {
     try {
       const response = await getCartItems(userId);
+      console.log("xxxx",response?.items);
+      
       setProducts(response?.items);
     } catch (error: any) {}
   };
@@ -87,6 +89,7 @@ export default function Index() {
       message.error("Please add an address")
     }else{
       dispatch(orderedProducts(products));  
+      dispatch(userId(products[0]?.user))
       message.success('Done');
     }
   };

@@ -3,7 +3,7 @@ const initialState = {
   orderDetails: {
     address: '',
     products: '',
-    userId: localStorage.getItem('userInfo'),
+    userId: 0,
     paymentMethod: 'cash',
   },
 };
@@ -21,9 +21,12 @@ export const orderSlice = createSlice({
     orderedProducts: (state, action) => {
       state.orderDetails.products = action.payload;
     },
+    userId: (state, action) => {
+      state.orderDetails.userId = +action.payload;
+    },
   },
 });
 
-export const { userAddress, paymentMethod, orderedProducts } =
+export const { userAddress, paymentMethod, orderedProducts,userId } =
   orderSlice.actions;
 export default orderSlice.reducer;
