@@ -7,14 +7,16 @@ import getCartItems from '@/Api/getCartItemsByUserId';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeItems } from '@/Redux/Cart/cartSlice';
-import { orderedProducts, userId } from '@/Redux/Order/orderSlice';
+import { orderedProducts, userIdDetails } from '@/Redux/Order/orderSlice';
 import { message } from 'antd';
+import { addOrder } from '@/Api/addOrders';
 
 export default function Index() {
   const router = useRouter();
   const path = usePathname();
   const [products, setProducts] = useState() as any;
   const dispatch = useDispatch();
+  const orderDetails = useSelector((state: any) => state.order.orderDetails);
 
   useEffect(() => {
     const userId = localStorage.getItem('userInfo');
@@ -25,8 +27,8 @@ export default function Index() {
   const handleGetCartItems = async (userId: any) => {
     try {
       const response = await getCartItems(userId);
-      console.log("xxxx",response?.items);
-      
+      dispatch(orderedProducts(response?.items));
+      dispatch(userIdDetails(userId));
       setProducts(response?.items);
     } catch (error: any) {}
   };
@@ -41,9 +43,7 @@ export default function Index() {
       });
       dispatch(removeItems());
       setProducts(remainItems);
-    } catch (error: any) {
-      console.log(error.message);
-    }
+    } catch (error: any) {}
   };
   const handleQuantity = async (e: any, product: any) => {
     e.preventDefault();
@@ -56,10 +56,13 @@ export default function Index() {
 
       const updatedItems = products.map((item: any) => {
         if (item.id === response.data.id) {
-          item.quantity = e.target.value;
+          // Create a new object with the updated 'quantity' property
+          const updatedItem = { ...item, quantity: e.target.value };
+          return updatedItem;
         }
         return item;
       });
+
       setProducts(updatedItems);
     } catch (error) {
       console.log(error);
@@ -83,17 +86,25 @@ export default function Index() {
     return product?.product.price * product?.quantity;
   };
 
-  const orderDetails = useSelector((state: any) => state.order.orderDetails);
   const handleOrder = () => {
-    if (orderDetails.address==='') {
-      message.error("Please add an address")
-    }else{
-      dispatch(orderedProducts(products));  
-      dispatch(userId(products[0]?.user))
-      message.success('Done');
+    if (orderDetails.address === '') {
+      message.error('Please add an address');
+    } else {
+      handleAddOrder();
     }
   };
-  console.log('111111', orderDetails);
+
+  const handleAddOrder = async () => {
+    const totalAmount = getTotalAmount();
+    const totalItems = getTotalItems();
+    try {
+      await addOrder(orderDetails, totalAmount, totalItems);
+      message.success('Order placed successfully');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 bg-white mt-8">

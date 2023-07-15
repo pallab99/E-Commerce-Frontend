@@ -21,12 +21,14 @@ export const orderSlice = createSlice({
     orderedProducts: (state, action) => {
       state.orderDetails.products = action.payload;
     },
-    userId: (state, action) => {
-      state.orderDetails.userId = +action.payload;
+    userIdDetails: (state, action) => {
+      console.log("Redux",action.payload);
+      
+      state.orderDetails.userId = action.payload;
     },
   },
 });
 
-export const { userAddress, paymentMethod, orderedProducts,userId } =
+export const { userAddress, paymentMethod, orderedProducts,userIdDetails } =
   orderSlice.actions;
 export default orderSlice.reducer;
