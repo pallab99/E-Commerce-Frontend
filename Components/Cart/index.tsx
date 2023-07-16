@@ -32,8 +32,8 @@ export default function Index() {
       setProducts(response?.items);
     } catch (error: any) {}
   };
-  const handleRemoveItems = async (e: any, itemId: any) => {
-    e.preventDefault();
+  const handleRemoveItems = async (itemId: any) => {
+    // e.preventDefault();
     try {
       const response = await axios.delete(
         `http://localhost:8080/cart/${itemId}`
@@ -98,8 +98,23 @@ export default function Index() {
     const totalAmount = getTotalAmount();
     const totalItems = getTotalItems();
     try {
-      await addOrder(orderDetails, totalAmount, totalItems);
+      const response = await addOrder(orderDetails, totalAmount, totalItems);
+      resetCartAfterOrder();
       message.success('Order placed successfully');
+      router.push(`/order-success/${response?.data?.id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const resetCartAfterOrder = async () => {
+    try {
+      const userId = localStorage.getItem('userInfo');
+      const response = await getCartItems(userId);
+      const items = response?.items;
+      for (let item of items) {
+        await handleRemoveItems(item.id);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -163,7 +178,7 @@ export default function Index() {
                           <button
                             type="button"
                             className="font-medium text-indigo-600 hover:text-indigo-500"
-                            onClick={(e) => handleRemoveItems(e, product.id)}
+                            onClick={() => handleRemoveItems(product.id)}
                           >
                             Remove
                           </button>
