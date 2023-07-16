@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
 
 const getCartItems = async (userId: any) => {
   try {
