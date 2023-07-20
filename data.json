@@ -2421,6 +2421,116 @@
     }
   ],
   "orders": [
-    
+    {
+      "orderDetails": {
+        "address": {
+          "name": "Pallab Majumdar",
+          "email": "majumdarp79@gmail.com",
+          "phone": "01984101170",
+          "street": "Mirpur,Dhaka",
+          "city": "Dhaka",
+          "state": "zrtc",
+          "pinCode": "6969"
+        },
+        "products": [
+          {
+            "product": {
+              "id": 1,
+              "title": "iPhone 9",
+              "description": "An apple mobile which is nothing like apple",
+              "price": 549,
+              "discountPercentage": 12.96,
+              "rating": 4.69,
+              "stock": 94,
+              "brand": "Apple",
+              "category": "smartphones",
+              "thumbnail": "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
+              "images": [
+                "https://i.dummyjson.com/data/products/1/1.jpg",
+                "https://i.dummyjson.com/data/products/1/2.jpg",
+                "https://i.dummyjson.com/data/products/1/3.jpg",
+                "https://i.dummyjson.com/data/products/1/4.jpg",
+                "https://i.dummyjson.com/data/products/1/thumbnail.jpg"
+              ]
+            },
+            "quantity": "1",
+            "user": "2",
+            "id": 26
+          },
+          {
+            "product": {
+              "id": 6,
+              "title": "MacBook Pro",
+              "description": "MacBook Pro 2021 with mini-LED display may launch between September, November",
+              "price": 1749,
+              "discountPercentage": 11.02,
+              "rating": 4.57,
+              "stock": 83,
+              "brand": "Apple",
+              "category": "laptops",
+              "thumbnail": "https://i.dummyjson.com/data/products/6/thumbnail.png",
+              "images": [
+                "https://i.dummyjson.com/data/products/6/1.png",
+                "https://i.dummyjson.com/data/products/6/2.jpg",
+                "https://i.dummyjson.com/data/products/6/3.png",
+                "https://i.dummyjson.com/data/products/6/4.jpg"
+              ]
+            },
+            "quantity": "1",
+            "user": "2",
+            "id": 27
+          }
+        ],
+        "userId": "2",
+        "paymentMethod": "cash"
+      },
+      "totalAmount": 2298,
+      "totalItems": 2,
+      "id": 1
+    },
+    {
+      "orderDetails": {
+        "address": {
+          "name": "Pallab Majumdar",
+          "email": "majumdarp79@gmail.com",
+          "phone": "01984101170",
+          "street": "Mirpur,Dhaka",
+          "city": "Dhaka",
+          "state": "blow",
+          "pinCode": "1234567890"
+        },
+        "products": [
+          {
+            "product": {
+              "id": 8,
+              "title": "Microsoft Surface Laptop 4",
+              "description": "Style and speed. Stand out on HD video calls backed by Studio Mics. Capture ideas on the vibrant touchscreen.",
+              "price": 1499,
+              "discountPercentage": 10.23,
+              "rating": 4.43,
+              "stock": 68,
+              "brand": "Microsoft Surface",
+              "category": "laptops",
+              "thumbnail": "https://i.dummyjson.com/data/products/8/thumbnail.jpg",
+              "images": [
+                "https://i.dummyjson.com/data/products/8/1.jpg",
+                "https://i.dummyjson.com/data/products/8/2.jpg",
+                "https://i.dummyjson.com/data/products/8/3.jpg",
+                "https://i.dummyjson.com/data/products/8/4.jpg",
+                "https://i.dummyjson.com/data/products/8/thumbnail.jpg"
+              ]
+            },
+            "quantity": 1,
+            "user": "2",
+            "id": 26
+          }
+        ],
+        "userId": "2",
+        "paymentMethod": "cash"
+      },
+      "totalAmount": 1499,
+      "totalItems": 1,
+      "id": 2
+    }
   ]
 }

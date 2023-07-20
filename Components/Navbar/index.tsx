@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '@/Redux/store';
 import getCartItems from '@/Api/getCartItemsByUserId';
 import { Skeleton } from 'antd';
+import Link from 'next/link';
 
 const user = {
   name: 'Tom Cook',
@@ -28,7 +29,7 @@ const navigation = [
 ];
 const userNavigation = [
   { name: 'Your Profile', href: '#' },
-  { name: 'Settings', href: '#' },
+  { name: 'My Orders', href: '/my-orders' },
   { name: 'Sign out', href: '#' },
 ];
 
@@ -39,14 +40,18 @@ export default function Navbar(props: any) {
   const router = useRouter();
   const path = usePathname();
   const [cartProducts, setCartProducts] = useState() as any;
-  const itemsAddedCart=useSelector((state:RootState)=>state.cart.addedToCart)
-  const itemsRemovedCart=useSelector((state:RootState)=>state.cart.removeFromCart)
+  const itemsAddedCart = useSelector(
+    (state: RootState) => state.cart.addedToCart
+  );
+  const itemsRemovedCart = useSelector(
+    (state: RootState) => state.cart.removeFromCart
+  );
   useEffect(() => {
     const userId = localStorage.getItem('userInfo');
     if (userId) {
       handleGetCartItems(userId);
     }
-  },[itemsAddedCart,itemsRemovedCart]);
+  }, [itemsAddedCart, itemsRemovedCart]);
   const handleGetCartItems = async (userId: any) => {
     try {
       const response = await getCartItems(userId);
@@ -138,7 +143,7 @@ export default function Navbar(props: any) {
                             {userNavigation.map((item) => (
                               <Menu.Item key={item.name}>
                                 {({ active }) => (
-                                  <a
+                                  <Link
                                     href={item.href}
                                     className={classNames(
                                       active ? 'bg-gray-100' : '',
@@ -146,7 +151,7 @@ export default function Navbar(props: any) {
                                     )}
                                   >
                                     {item.name}
-                                  </a>
+                                  </Link>
                                 )}
                               </Menu.Item>
                             ))}
