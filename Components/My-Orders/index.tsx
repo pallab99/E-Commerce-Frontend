@@ -16,13 +16,13 @@ export default function Index() {
       setOrderDetails(orderDetails?.data);
     } catch (error) {
       console.log(error);
-    }
+    } 
   };
   return (
     <>
       <Navbar></Navbar>
       {!orderDetails ? (
-        <Spin></Spin>
+        <Spin size="large" className='flex items-center justify-center text-xl my-3'></Spin>
       ) : (
         orderDetails.map((order: any) => {
           return (
