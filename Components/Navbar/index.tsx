@@ -80,7 +80,7 @@ export default function Navbar(props: any) {
                         }}
                       />
                     </div>
-                    <div className="hidden md:block">
+                    <div className="hidden">
                       <div className="ml-10 flex items-baseline space-x-4">
                         {navigation.map((item) => (
                           <a
