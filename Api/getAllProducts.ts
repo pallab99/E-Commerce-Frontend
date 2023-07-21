@@ -1,5 +1,4 @@
-import axios from 'axios';
-
+import api from "./api"
 const getAllProducts = async (props: any, pagination: any) => {
   try {
     const { filter, sort } = props;
@@ -35,14 +34,15 @@ const getAllProducts = async (props: any, pagination: any) => {
       queryString = queryString.replace('brand=&', '');
     }
 
-    const response = await axios.get(
-      'http://localhost:8080/products?' +
+    const response = await api.get(
+      '/allProducts?' +
         queryString +
         sortQueryString +
         paginationQueryString
     );
-    const totalCount = response.headers['x-total-count'];
-    return { data: response.data, totalItems: totalCount };
+    console.log("header",response.data);
+    
+    return { data: response.data.products, totalItems: response.data.totalItems };
   } catch (error) {
     console.log(error);
     throw error;

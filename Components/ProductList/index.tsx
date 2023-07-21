@@ -33,6 +33,8 @@ export default function Index(props: any) {
     try {
       setAllProductsLoader(true);
       const products = await getAllProducts(props, Pagination);
+      console.log("12233",products);
+      
       setProducts(products.data);
       setTotalItems(products.totalItems);
       setAllProductsLoader(false);
@@ -51,10 +53,10 @@ export default function Index(props: any) {
             <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
               {products?.map((product: any) => (
                 <div
-                  key={product.id}
+                  key={product._id}
                   className="group relative rounded-sm cursor-pointer"
                   onClick={() => {
-                    router.push(`/productDetails/${product.id}`);
+                    router.push(`/productDetails/${product._id}`);
                   }}
                 >
                   <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">

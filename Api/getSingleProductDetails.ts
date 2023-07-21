@@ -1,9 +1,9 @@
-import axios from "axios";
+import api from "./api"
 
 const getSingleProductDetails = async (productId:any) => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/products/${productId}`
+      const response = await api.get(
+        `product/${productId}`
       );
       const data = response.data;
       const productImages = data?.images;
