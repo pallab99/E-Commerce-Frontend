@@ -33,6 +33,8 @@ export default function Index(props: any) {
     try {
       setAllProductsLoader(true);
       const products = await getAllProducts(props, Pagination);
+      console.log("12233",products);
+      
       setProducts(products.data);
       setTotalItems(products.totalItems);
       setAllProductsLoader(false);
