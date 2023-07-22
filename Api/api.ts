@@ -1,7 +1,7 @@
+import { BASE_URL } from '@/Constants/constants';
 import axios from 'axios';
-
 const instance = axios.create({
-  baseURL: 'https://urban-daily-backend.onrender.com/api',
+  baseURL: BASE_URL,
 });
 
 export default instance;
