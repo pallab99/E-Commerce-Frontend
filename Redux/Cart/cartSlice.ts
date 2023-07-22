@@ -8,7 +8,9 @@ export const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    cartItems: (state) => {        
+    cartItems: (state) => { 
+      console.log("action addedtocart");
+             
       state.addedToCart+=1;
     },
     removeItems: (state) => {        

@@ -43,6 +43,8 @@ export default function Navbar(props: any) {
   const itemsAddedCart = useSelector(
     (state: RootState) => state.cart.addedToCart
   );
+
+  
   const itemsRemovedCart = useSelector(
     (state: RootState) => state.cart.removeFromCart
   );
