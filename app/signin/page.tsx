@@ -1,40 +1,32 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
 import { message } from 'antd';
+import signInUser from '@/Api/signInUser';
 export default function Page() {
   const router = useRouter();
-
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm();
+
   const handleUserSignIn = async (data: any) => {
     try {
-      const { email, password } = data;
-
-      const response = await axios.get(
-        'http://localhost:8080/users?email=' + email
-      );
-
-      const LoggedInUserData = response.data[0];
-      console.log(LoggedInUserData);
-      
-      localStorage.setItem('userInfo', JSON.stringify(LoggedInUserData?.id));
-      // dispatch(logInUser(LoggedInUserData));
-
+      const response = await signInUser(data);
+      const LoggedInUserId = response?.data?._id;
+      localStorage.setItem('userInfo', LoggedInUserId);
       message.success('Login successful');
       router.push('/');
-    } catch (error) {
-      message.error('Login failed');
+    } catch (error: any) {
+      const errorMessage = error.response.data.message;
+      message.error(errorMessage);
     }
   };
+  
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">

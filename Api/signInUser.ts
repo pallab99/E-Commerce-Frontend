@@ -1,8 +1,8 @@
 import api from "./api"
 
-const signUpUser = async (data:any) => {
+const signInUser = async (data:any) => {
     try {
-      const response = await api.post('/signUp', data);
+      const response = await api.post('/signIn', data);
       const userDetails = response;
       return userDetails;
     } catch (error) {
@@ -11,5 +11,5 @@ const signUpUser = async (data:any) => {
     }
   };
   
-  export default signUpUser;
+  export default signInUser;
   
