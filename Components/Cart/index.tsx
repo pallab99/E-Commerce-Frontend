@@ -10,6 +10,8 @@ import { removeItems } from '@/Redux/Cart/cartSlice';
 import { orderedProducts, userIdDetails } from '@/Redux/Order/orderSlice';
 import { message } from 'antd';
 import { addOrder } from '@/Api/addOrders';
+import removeCartItem from '@/Api/removeCartItem';
+import handleCartItemQuantity from '@/Api/handleCartItemQuantity';
 
 export default function Index() {
   const router = useRouter();
@@ -23,7 +25,7 @@ export default function Index() {
     if (userId) {
       handleGetCartItems(userId);
     }
-  }, []);
+  }, [products]);
   const handleGetCartItems = async (userId: any) => {
     try {
       const response = await getCartItems(userId);
@@ -33,30 +35,30 @@ export default function Index() {
     } catch (error: any) {}
   };
   const handleRemoveItems = async (itemId: any) => {
-    // e.preventDefault();
     try {
-      const response = await axios.delete(
-        `http://localhost:8080/cart/${itemId}`
-      );
+      const response = await removeCartItem(itemId);
       const remainItems = products?.filter((item: any) => {
         return item.id != itemId;
       });
       dispatch(removeItems());
       setProducts(remainItems);
-    } catch (error: any) {}
+      message.success('Product removed successfully');
+    } catch (error: any) {
+      console.log(error);
+    }
   };
   const handleQuantity = async (e: any, product: any) => {
     e.preventDefault();
+    console.log(product);
+
     try {
-      const data = { ...product, quantity: e.target.value };
-      const response = await axios.put(
-        `http://localhost:8080/cart/${data.id}`,
-        data
-      );
+      const data = {
+        quantity: e.target.value,
+      };
+      const response = await handleCartItemQuantity(product._id, data);
 
       const updatedItems = products.map((item: any) => {
-        if (item.id === response.data.id) {
-          // Create a new object with the updated 'quantity' property
+        if (item.id === response?.data.id) {
           const updatedItem = { ...item, quantity: e.target.value };
           return updatedItem;
         }
@@ -64,6 +66,7 @@ export default function Index() {
       });
 
       setProducts(updatedItems);
+      message.success('quantity Updated');
     } catch (error) {
       console.log(error);
     }
@@ -178,7 +181,7 @@ export default function Index() {
                           <button
                             type="button"
                             className="font-medium text-indigo-600 hover:text-indigo-500"
-                            onClick={() => handleRemoveItems(product.id)}
+                            onClick={() => handleRemoveItems(product._id)}
                           >
                             Remove
                           </button>
