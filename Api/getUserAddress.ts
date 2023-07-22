@@ -1,13 +1,13 @@
 import axios from 'axios';
-
-const getUserDetailsAndAddresses = async (userId:any) => {
+import Api from './api'
+const getUserAddresses = async (userId:any) => {
   try {
-    const response = await axios.get(`http://localhost:8080/users/${userId}`);
+    const response = await Api.get(`getAddressByUserId/${userId}`);
     return response;
   } catch (error) {
     console.log(error);
-    throw error; // You might want to throw the error back to the calling code for handling.
+    throw error; 
   }
 };
 
-export default getUserDetailsAndAddresses;
+export default getUserAddresses;
