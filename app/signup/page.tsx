@@ -19,16 +19,18 @@ export default function Page() {
   console.log(errors);
   const handleSignUpUser = async (data:any) => {
     try {
-      const userDetails = await signUpUser(data);
-      setUserDetails(userDetails);
+      const response = await signUpUser(data);      
+      setUserDetails(response.data);
       message.success("Sign Up Successfully!");
-    } catch (error) {
-      message.error("Something went wrong!");
+      router.push("/signin")
+    } catch (error:any) {
+      const errorMessage=error.response.data.message
+      message.error(errorMessage);
     }
   };
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-      {userDetails.email}
+      {/* {userDetails.email} */}
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <img
           className="mx-auto h-10 w-auto"
@@ -48,6 +50,31 @@ export default function Page() {
             handleSignUpUser(data);
           })}
         >
+          <div>
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Full Name
+            </label>
+
+            <div className="mt-2">
+              <input
+                id="name"
+                {...register('name', {
+                  required: 'Name is required',
+                })}
+                type="text"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+
+              {errors.name ? (
+                //@ts-ignore
+                <p className="text-red-600">{errors.name.message}</p>
+              ) : null}
+            </div>
+          </div>
+
           <div>
             <label
               htmlFor="email"
