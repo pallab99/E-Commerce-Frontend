@@ -19,13 +19,14 @@ export default function Index() {
   const [products, setProducts] = useState() as any;
   const dispatch = useDispatch();
   const orderDetails = useSelector((state: any) => state.order.orderDetails);
-
+  const removedCartItem=useSelector((state:any)=>state.cart.removeFromCart)
+  
   useEffect(() => {
     const userId = localStorage.getItem('userInfo');
     if (userId) {
       handleGetCartItems(userId);
     }
-  }, [products]);
+  }, [removedCartItem]);
   const handleGetCartItems = async (userId: any) => {
     try {
       const response = await getCartItems(userId);

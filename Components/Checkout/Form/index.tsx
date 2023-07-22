@@ -1,3 +1,5 @@
+import addUserAddress from '@/Api/addUserAddress';
+import getUserAddresses from '@/Api/getUserAddress';
 import { userAddress, paymentMethod } from '@/Redux/Order/orderSlice';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
@@ -10,8 +12,7 @@ export default function Index(props: any) {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('cash');
   const dispatch = useDispatch();
- 
-  
+
   const {
     register,
     handleSubmit,
@@ -26,11 +27,9 @@ export default function Index(props: any) {
   const handleAddAddress = async (data: any) => {
     try {
       const userId = localStorage.getItem('userInfo');
-      const address = [...addresses, data];
-      const response = await axios.patch(
-        `http://localhost:8080/users/${userId}`,
-        { addresses: address }
-      );
+      const address = data;
+      const newData = { user: userId, addresses: address };
+      const response = await addUserAddress(newData);
       reset();
       setHandleOrderClicked(handleOrderClicked + 1);
     } catch (error) {
@@ -40,16 +39,15 @@ export default function Index(props: any) {
 
   const getUserAddress = async (userId: any) => {
     try {
-      const response = await axios.get(`http://localhost:8080/users/${userId}`);
-      // console.log([response.data]);
-      setAddresses(response.data.addresses);
+      const response = await getUserAddresses(userId);
+      setAddresses(response.data.result);
     } catch (error) {}
   };
 
   const handleSelectedAddress = (e: any) => {
     const idx = e.target.value;
     setSelectedAddress(addresses[idx]);
-    dispatch(userAddress({...addresses[idx]}));
+    dispatch(userAddress({ ...addresses[idx] }));
   };
   const handleSelectedPaymentMethod = (e: any) => {
     setSelectedPaymentMethod(e.target.value);
@@ -247,22 +245,22 @@ export default function Index(props: any) {
                         />
                         <div className="min-w-0 flex-auto">
                           <p className="text-sm font-semibold leading-6 text-gray-900">
-                            {item?.name}
+                            {item?.addresses[0]?.name}
                           </p>
                           <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                            {item?.street}
+                            {item?.addresses[0]?.street}
                           </p>
                           <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                            {item?.pinCode}
+                            {item?.addresses[0]?.pinCode}
                           </p>
                         </div>
                       </div>
                       <div className="hidden sm:flex sm:flex-col sm:items-end">
                         <p className="text-sm leading-6 text-gray-900">
-                          Phone: {item?.phone}
+                          Phone: {item?.addresses[0]?.phone}
                         </p>
                         <p className="text-sm leading-6 text-gray-500">
-                          {item?.city}
+                          {item?.addresses[0]?.city}
                         </p>
                       </div>
                     </li>
