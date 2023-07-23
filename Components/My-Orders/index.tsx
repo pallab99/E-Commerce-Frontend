@@ -1,11 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import Navbar from '../Navbar';
 import { getMyOrders } from '@/Api/getMyOrders';
+import Loader from '@/Components/Loader';
 export default function Index() {
-  const [orderDetails, setOrderDetails] = useState() as any;
+  const [orderDetails, setOrderDetails] = useState([]) as any;
   useEffect(() => {
     const userId = window.localStorage.getItem('userInfo');
     handleGetMyOrders(userId);
@@ -13,16 +13,18 @@ export default function Index() {
   const handleGetMyOrders = async (userId: any) => {
     try {
       const orderDetails = await getMyOrders(userId);
+      console.log(orderDetails.data);
+
       setOrderDetails(orderDetails?.data);
     } catch (error) {
       console.log(error);
-    } 
+    }
   };
   return (
     <>
       <Navbar></Navbar>
       {!orderDetails ? (
-        <Spin size="large" className='flex items-center justify-center text-xl my-3'></Spin>
+        <Loader></Loader>
       ) : (
         orderDetails.map((order: any) => {
           return (
@@ -30,11 +32,11 @@ export default function Index() {
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 bg-white mt-8">
                 <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                   <h1 className="text-4xl font-bold tracking-tight text-gray-900 mb-5">
-                    order #{order?.id}
+                    order # {order?._id}
                   </h1>
                   <div className="flow-root">
                     <ul role="list" className="-my-6 divide-y divide-gray-200">
-                      {order.orderDetails.products.map((product: any) => (
+                      {order.items.map((product: any) => (
                         <li key={product.product.id} className="flex py-6">
                           <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                             <img

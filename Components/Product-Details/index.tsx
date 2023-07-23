@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { StarIcon } from '@heroicons/react/20/solid';
 import { RadioGroup } from '@headlessui/react';
-import axios from 'axios';
 import { Skeleton, Spin, message } from 'antd';
 import getSingleProductDetails from '@/Api/getSingleProductDetails';
 import Navbar from '../Navbar';

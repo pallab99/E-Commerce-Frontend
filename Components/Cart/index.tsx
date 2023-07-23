@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import getCartItems from '@/Api/getCartItemsByUserId';
-import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeItems } from '@/Redux/Cart/cartSlice';
 import { orderedProducts, userIdDetails } from '@/Redux/Order/orderSlice';
@@ -20,13 +19,13 @@ export default function Index() {
   const dispatch = useDispatch();
   const orderDetails = useSelector((state: any) => state.order.orderDetails);
   const removedCartItem=useSelector((state:any)=>state.cart.removeFromCart)
-  
+  const [quantityUpdated,setQuantityUpdated] =useState(0)
   useEffect(() => {
     const userId = localStorage.getItem('userInfo');
     if (userId) {
       handleGetCartItems(userId);
     }
-  }, [removedCartItem]);
+  }, [removedCartItem,quantityUpdated]);
   const handleGetCartItems = async (userId: any) => {
     try {
       const response = await getCartItems(userId);
@@ -35,7 +34,7 @@ export default function Index() {
       setProducts(response?.items);
     } catch (error: any) {}
   };
-  const handleRemoveItems = async (itemId: any) => {
+  const handleRemoveItems = async (itemId: any,showNotification=true) => {
     try {
       const response = await removeCartItem(itemId);
       const remainItems = products?.filter((item: any) => {
@@ -43,6 +42,7 @@ export default function Index() {
       });
       dispatch(removeItems());
       setProducts(remainItems);
+      if(showNotification)
       message.success('Product removed successfully');
     } catch (error: any) {
       console.log(error);
@@ -57,16 +57,17 @@ export default function Index() {
         quantity: e.target.value,
       };
       const response = await handleCartItemQuantity(product._id, data);
-
+      console.log("000000",response?.data);
+      
       const updatedItems = products.map((item: any) => {
-        if (item.id === response?.data.id) {
+        if (item.id === response?.data._id) {
           const updatedItem = { ...item, quantity: e.target.value };
           return updatedItem;
         }
         return item;
       });
-
       setProducts(updatedItems);
+      setQuantityUpdated(quantityUpdated+1);
       message.success('quantity Updated');
     } catch (error) {
       console.log(error);
@@ -101,23 +102,33 @@ export default function Index() {
   const handleAddOrder = async () => {
     const totalAmount = getTotalAmount();
     const totalItems = getTotalItems();
+    const items=orderDetails.products;
+    const selectedAddress=orderDetails.address.addresses[0];
+    const user=orderDetails.userId;
+    const paymentMethod = orderDetails.paymentMethod;
+    const data={totalAmount,totalItems,items,selectedAddress,user,paymentMethod}
+    console.log(orderDetails);
+
     try {
-      const response = await addOrder(orderDetails, totalAmount, totalItems);
-      resetCartAfterOrder();
+      const response = await addOrder(data);
+      resetCartAfterOrder(response.data._id);
       message.success('Order placed successfully');
-      router.push(`/order-success/${response?.data?.id}`);
+      console.log("99999",response.data._id);
+      
+      router.push(`/order-success/${response?.data?._id}`);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const resetCartAfterOrder = async () => {
+  const resetCartAfterOrder = async (orderId:any) => {
     try {
       const userId = localStorage.getItem('userInfo');
       const response = await getCartItems(userId);
       const items = response?.items;
+      
       for (let item of items) {
-        await handleRemoveItems(item.id);
+        await handleRemoveItems(item._id,false);
       }
     } catch (error) {
       console.log(error);

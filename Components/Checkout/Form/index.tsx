@@ -1,7 +1,6 @@
 import addUserAddress from '@/Api/addUserAddress';
 import getUserAddresses from '@/Api/getUserAddress';
 import { userAddress, paymentMethod } from '@/Redux/Order/orderSlice';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';

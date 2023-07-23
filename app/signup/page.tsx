@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import axios from 'axios';
 import { message } from 'antd';
 import signUpUser from '@/Api/signUpUser';
 

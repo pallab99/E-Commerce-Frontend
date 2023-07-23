@@ -1,4 +1,3 @@
-import axios from 'axios';
 import Api from './api'
 const getUserAddresses = async (userId:any) => {
   try {
