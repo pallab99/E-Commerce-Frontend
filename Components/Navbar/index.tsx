@@ -43,7 +43,8 @@ export default function Navbar(props: any) {
   const itemsAddedCart = useSelector(
     (state: RootState) => state.cart.addedToCart
   );
-
+  console.log({itemsAddedCart});
+  
   const itemsRemovedCart = useSelector(
     (state: RootState) => state.cart.removeFromCart
   );
@@ -53,10 +54,12 @@ export default function Navbar(props: any) {
       handleGetCartItems(userId);
     }
   }, [itemsAddedCart, itemsRemovedCart]);
+  const [cartItemsCount,setCartItemCount]=useState()
   const handleGetCartItems = async (userId: any) => {
+    console.log("handleGetCartItems");
+    
     try {
       const response = await getCartItems(userId);
-      console.log(response?.items);
       setCartProducts(response?.items);
     } catch (error: any) {
       console.log(error.message);

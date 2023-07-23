@@ -10,8 +10,11 @@ import { cartItems } from '@/Redux/Cart/cartSlice';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import Loader from '@/Components/Loader';
+import { useRouter } from 'next/navigation';
+import { message } from 'antd';
 
 export default function Index(props: any) {
+  const router = useRouter();
   const [product, setProduct] = useState([]) as any;
   const [images, setImages] = useState([]);
   const [productDetailsLoader, setProductDetailsLoader] = useState(true);
@@ -35,8 +38,14 @@ export default function Index(props: any) {
   const dispatch = useDispatch();
   const handleAddToCart = async (e: any) => {
     e.preventDefault();
-    addToCart(product);
-    dispatch(cartItems());
+    const userId = window.localStorage.getItem('userInfo');
+    if (!userId) {
+      router.push("/signin")
+      message.error('Please Sign In Before Adding To Cart');
+    } else {
+      addToCart(product);
+      dispatch(cartItems());
+    }
   };
 
   return (

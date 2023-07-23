@@ -1,17 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   items:[],
-  addedToCart:0,
+  addedToCart:false,
   removeFromCart:0
 };
 export const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    cartItems: (state) => { 
-      console.log("action addedtocart");
-             
-      state.addedToCart+=1;
+    cartItems: (state) => {              
+      state.addedToCart=!state.addedToCart;
     },
     removeItems: (state) => {        
       state.removeFromCart+=1;
