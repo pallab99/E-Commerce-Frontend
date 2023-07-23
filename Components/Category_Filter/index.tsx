@@ -11,7 +11,6 @@ import {
   Squares2X2Icon,
 } from '@heroicons/react/20/solid';
 import ProductList from '../ProductList';
-import axios from 'axios';
 import getAllCategories from '@/Api/getAllCategories';
 import getAllBrands from '@/Api/getAllBrands';
 

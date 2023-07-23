@@ -1,10 +1,9 @@
 'use client';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Navbar from '../Navbar';
 import { Button, Skeleton } from 'antd';
-import getUserDetailsAndAddresses from '@/Api/getUserAddress';
 import { removeUserAddress } from '@/Api/deleteUserAddress';
+import getUserAddresses from '@/Api/getUserAddress';
 
 export default function Index() {
   const [userDetails, setUserDetails] = useState<any>([]);
@@ -14,13 +13,14 @@ export default function Index() {
   useEffect(() => {
     const userId = window.localStorage.getItem('userInfo');
     handleGetUserDetails_And_Addresses(userId);
-  }, []);
+  }, [userAddresses]);
 
   const handleGetUserDetails_And_Addresses = async (userId: any) => {
     try {
-      const response = await getUserDetailsAndAddresses(userId);
-      setUserDetails(response.data);
-      setUserAddresses(response.data.addresses);
+      const response = await getUserAddresses(userId);
+
+      setUserDetails(response.data.result[0].user);
+      setUserAddresses(response.data.result);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -34,13 +34,10 @@ export default function Index() {
   const handleRemovedAddress = async (e: any) => {
     e.preventDefault();
     try {
-      const response = await removeUserAddress(
-        userDetails,
-        userAddresses,
-        selectedAddress
-      );
-      setUserDetails(response?.data);
-      setUserAddresses(response?.data?.addresses);
+      const response = await removeUserAddress(selectedAddress);
+      setUserDetails(response.data.result[0].user);
+      setUserAddresses(response.data.result);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -72,7 +69,7 @@ export default function Index() {
               {userAddresses &&
                 userAddresses?.map((item: any, index: number) => (
                   <li
-                    key={item?.id}
+                    key={item[0]?._id}
                     className="flex justify-between gap-x-6 px-5 py-5 border-solid border-2 border-gray-200 mb-3 text-black"
                   >
                     <div className="flex gap-x-4">
@@ -80,27 +77,27 @@ export default function Index() {
                         onChange={(e) => handleSelectedAddress(e)}
                         name="address"
                         type="radio"
-                        value={index}
+                        value={item?._id}
                         className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                       />
                       <div className="min-w-0 flex-auto">
                         <p className="text-sm font-semibold leading-6 text-gray-900">
-                          {item?.name}
+                          {item?.addresses[0].name}
                         </p>
                         <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                          {item?.street}
+                          {item?.addresses[0].street}
                         </p>
                         <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                          {item?.pinCode}
+                          {item?.addresses[0].pinCode}
                         </p>
                       </div>
                     </div>
                     <div className="sm:flex sm:flex-col sm:items-end">
                       <p className="text-sm leading-6 text-gray-900">
-                        Phone: {item?.phone}
+                        Phone: {item?.addresses[0].phone}
                       </p>
                       <p className="text-sm leading-6 text-gray-500">
-                        {item?.city}
+                        {item?.addresses[0].city}
                       </p>
                     </div>
                   </li>
