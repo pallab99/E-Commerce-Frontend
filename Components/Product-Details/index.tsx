@@ -3,12 +3,15 @@
 import { useEffect, useState } from 'react';
 import { StarIcon } from '@heroicons/react/20/solid';
 import { RadioGroup } from '@headlessui/react';
-import { Skeleton, Spin, message } from 'antd';
+import { Skeleton} from 'antd';
 import getSingleProductDetails from '@/Api/getSingleProductDetails';
 import Navbar from '../Navbar';
 import addToCart from '@/Api/addToCart';
 import { useDispatch } from 'react-redux';
 import { cartItems } from '@/Redux/Cart/cartSlice';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
+
 const colors = [
   { name: 'White', class: 'bg-white', selectedClass: 'ring-gray-400' },
   { name: 'Gray', class: 'bg-gray-200', selectedClass: 'ring-gray-400' },
@@ -116,32 +119,36 @@ export default function Index(props: any) {
             {/* Image gallery */}
             <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-x-8 lg:px-8">
               <div className="aspect-h-4 aspect-w-3 hidden overflow-hidden rounded-lg lg:block">
-                <img
+                <LazyLoadImage
                   src={images[0]}
                   alt={product?.title}
+                  effect='blur'
                   className="h-full w-full object-cover object-center"
                 />
               </div>
               <div className="hidden lg:grid lg:grid-cols-1 lg:gap-y-8">
                 <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg">
-                  <img
+                  <LazyLoadImage
                     src={images[1]}
                     alt={product?.title}
+                    effect='blur'
                     className="h-full w-full object-cover object-center"
                   />
                 </div>
                 <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg">
-                  <img
+                  <LazyLoadImage
                     src={images[2]}
                     alt={product?.title}
+                    effect='blur'
                     className="h-full w-full object-cover object-center"
                   />
                 </div>
               </div>
               <div className="aspect-h-5 aspect-w-4 lg:aspect-h-4 lg:aspect-w-3 sm:overflow-hidden sm:rounded-lg">
-                <img
+                <LazyLoadImage
                   src={images[3]}
                   alt={product?.title}
+                  effect='blur'
                   className="h-full w-full object-cover object-center"
                 />
               </div>

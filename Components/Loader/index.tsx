@@ -1,9 +1,9 @@
-import { Pinwheel } from '@uiball/loaders';
+import { JellyTriangle} from '@uiball/loaders';
 
 export default function Index() {
   return (
-    <div className="flex justify-center py-3">
-            <Pinwheel size={45} color="#6647ba"></Pinwheel>
-          </div>
+      <div className="flex justify-center my-24">
+              <JellyTriangle size={45} color="#6647ba" />
+            </div>
   );
 }
