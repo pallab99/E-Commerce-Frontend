@@ -43,7 +43,7 @@ export default function Index(props: any) {
       router.push("/signin")
       message.error('Please Sign In Before Adding To Cart');
     } else {
-      addToCart(product);
+      await addToCart(product);
       dispatch(cartItems());
     }
   };
