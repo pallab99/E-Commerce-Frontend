@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import {
   Bars3Icon,
@@ -47,10 +47,14 @@ export default function Navbar(props: any) {
   const itemsRemovedCart = useSelector(
     (state: RootState) => state.cart.removeFromCart
   );
+  const userIdRef = useRef(null); // Step 2: Create a useRef variable to hold userId
+
   useEffect(() => {
     const userId = localStorage.getItem('userInfo');
     if (userId) {
       handleGetCartItems(userId);
+      //@ts-ignore
+      userIdRef.current = userId; 
     }
   }, [itemsAddedCart, itemsRemovedCart]);
   
@@ -104,7 +108,7 @@ export default function Navbar(props: any) {
                     </div>
                   </div>
                   <div className="hidden md:block">
-                    <div className="ml-4 flex items-center md:ml-6">
+                    {userIdRef.current && <div className="ml-4 flex items-center md:ml-6">
                       <button
                         type="button"
                         className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
@@ -121,8 +125,7 @@ export default function Navbar(props: any) {
                       <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 mb-7 ml-0text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
                         {cartProducts?.length}
                       </span>
-                      {/* Profile dropdown */}
-                      <Menu as="div" className="relative ml-3">
+                       <Menu as="div" className="relative ml-3">
                         <div>
                           <Menu.Button className="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                             <span className="sr-only">Open user menu</span>
@@ -161,7 +164,7 @@ export default function Navbar(props: any) {
                           </Menu.Items>
                         </Transition>
                       </Menu>
-                    </div>
+                    </div>}
                   </div>
                   <div className="-mr-2 flex md:hidden">
                     {/* Mobile menu button */}
