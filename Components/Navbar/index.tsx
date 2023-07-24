@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import {
   Bars3Icon,
@@ -13,7 +13,8 @@ import type { RootState } from '@/Redux/store';
 import getCartItems from '@/Api/getCartItemsByUserId';
 import { Skeleton } from 'antd';
 import Link from 'next/link';
-
+import { UserOutlined } from '@ant-design/icons';
+import { Avatar } from 'antd';
 const user = {
   name: 'Tom Cook',
   email: 'tom@example.com',
@@ -47,18 +48,22 @@ export default function Navbar(props: any) {
   const itemsRemovedCart = useSelector(
     (state: RootState) => state.cart.removeFromCart
   );
+  const userIdRef = useRef(null); // Step 2: Create a useRef variable to hold userId
+
   useEffect(() => {
     const userId = localStorage.getItem('userInfo');
     if (userId) {
       handleGetCartItems(userId);
+      //@ts-ignore
+      userIdRef.current = userId;
     }
   }, [itemsAddedCart, itemsRemovedCart]);
-  
+
   const handleGetCartItems = async (userId: any) => {
     try {
       const response = await getCartItems(userId);
       console.log(response?.items);
-      
+
       setCartProducts(response?.items);
     } catch (error: any) {
       console.log(error.message);
@@ -104,64 +109,66 @@ export default function Navbar(props: any) {
                     </div>
                   </div>
                   <div className="hidden md:block">
-                    <div className="ml-4 flex items-center md:ml-6">
-                      <button
-                        type="button"
-                        className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                      >
-                        <span className="sr-only">View notifications</span>
-                        <ShoppingCartIcon
-                          className="h-6 w-6"
-                          aria-hidden="true"
-                          onClick={() => {
-                            router.push('/cart');
-                          }}
-                        />
-                      </button>
-                      <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 mb-7 ml-0text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-                        {cartProducts?.length}
-                      </span>
-                      {/* Profile dropdown */}
-                      <Menu as="div" className="relative ml-3">
-                        <div>
-                          <Menu.Button className="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                            <span className="sr-only">Open user menu</span>
-                            <img
-                              className="h-8 w-8 rounded-full"
-                              src={user.imageUrl}
-                              alt=""
-                            />
-                          </Menu.Button>
-                        </div>
-                        <Transition
-                          as={Fragment}
-                          enter="transition ease-out duration-100"
-                          enterFrom="transform opacity-0 scale-95"
-                          enterTo="transform opacity-100 scale-100"
-                          leave="transition ease-in duration-75"
-                          leaveFrom="transform opacity-100 scale-100"
-                          leaveTo="transform opacity-0 scale-95"
+                    {userIdRef.current && (
+                      <div className="ml-4 flex items-center md:ml-6">
+                        <button
+                          type="button"
+                          className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                         >
-                          <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            {userNavigation.map((item) => (
-                              <Menu.Item key={item.name}>
-                                {({ active }) => (
-                                  <Link
-                                    href={item.href}
-                                    className={classNames(
-                                      active ? 'bg-gray-100' : '',
-                                      'block px-4 py-2 text-sm text-gray-700'
-                                    )}
-                                  >
-                                    {item.name}
-                                  </Link>
-                                )}
-                              </Menu.Item>
-                            ))}
-                          </Menu.Items>
-                        </Transition>
-                      </Menu>
-                    </div>
+                          <span className="sr-only">View notifications</span>
+                          <ShoppingCartIcon
+                            className="h-6 w-6"
+                            aria-hidden="true"
+                            onClick={() => {
+                              router.push('/cart');
+                            }}
+                          />
+                        </button>
+                        <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 mb-7 ml-0text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                          {cartProducts?.length}
+                        </span>
+                        <Menu as="div" className="relative ml-3">
+                          <div>
+                            <Menu.Button className="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                              <span className="sr-only">Open user menu</span>
+                              <Avatar
+                                style={{
+                                  backgroundColor: '#87d068',
+                                }}
+                                icon={<UserOutlined />}
+                              />
+                            </Menu.Button>
+                          </div>
+                          <Transition
+                            as={Fragment}
+                            enter="transition ease-out duration-100"
+                            enterFrom="transform opacity-0 scale-95"
+                            enterTo="transform opacity-100 scale-100"
+                            leave="transition ease-in duration-75"
+                            leaveFrom="transform opacity-100 scale-100"
+                            leaveTo="transform opacity-0 scale-95"
+                          >
+                            <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                              {userNavigation.map((item) => (
+                                <Menu.Item key={item.name}>
+                                  {({ active }) => (
+                                    <Link
+                                      href={item.href}
+                                      className={classNames(
+                                        active ? 'bg-gray-100' : '',
+                                        'block px-4 py-2 text-sm text-gray-700'
+                                      )}
+                                    >
+                                      {item.name}
+                                    </Link>
+                                  )}
+                                </Menu.Item>
+                              ))}
+                            </Menu.Items>
+                          </Transition>
+                        </Menu>
+                      </div>
+                    )}
                   </div>
                   <div className="-mr-2 flex md:hidden">
                     {/* Mobile menu button */}
