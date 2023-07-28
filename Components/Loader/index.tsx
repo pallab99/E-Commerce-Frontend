@@ -1,9 +1,8 @@
-import { JellyTriangle} from '@uiball/loaders';
-
+require('./index.css');
 export default function Index() {
   return (
-      <div className="flex justify-center my-24">
-              <JellyTriangle size={45} color="#6647ba" />
-            </div>
+    <div className="flex justify-center items-center my-10">
+      <div className="custom-loader"></div>
+    </div>
   );
 }
