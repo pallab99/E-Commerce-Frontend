@@ -11,30 +11,35 @@ import { message } from 'antd';
 import { addOrder } from '@/Api/addOrders';
 import removeCartItem from '@/Api/removeCartItem';
 import handleCartItemQuantity from '@/Api/handleCartItemQuantity';
-
+import CartEmpty from '@/Components/cart-empty';
+import Loader from '@/Components/Loader';
 export default function Index() {
   const router = useRouter();
   const path = usePathname();
   const [products, setProducts] = useState() as any;
   const dispatch = useDispatch();
   const orderDetails = useSelector((state: any) => state.order.orderDetails);
-  const removedCartItem=useSelector((state:any)=>state.cart.removeFromCart)
-  const [quantityUpdated,setQuantityUpdated] =useState(0)
+  const removedCartItem = useSelector(
+    (state: any) => state.cart.removeFromCart
+  );
+  const [quantityUpdated, setQuantityUpdated] = useState(0);
   useEffect(() => {
     const userId = localStorage.getItem('userInfo');
     if (userId) {
       handleGetCartItems(userId);
     }
-  }, [removedCartItem,quantityUpdated]);
+  }, [removedCartItem, quantityUpdated]);
   const handleGetCartItems = async (userId: any) => {
     try {
       const response = await getCartItems(userId);
+      console.log('---', response?.items);
+
       dispatch(orderedProducts(response?.items));
       dispatch(userIdDetails(userId));
       setProducts(response?.items);
     } catch (error: any) {}
   };
-  const handleRemoveItems = async (itemId: any,showNotification=true) => {
+  const handleRemoveItems = async (itemId: any, showNotification = true) => {
     try {
       const response = await removeCartItem(itemId);
       const remainItems = products?.filter((item: any) => {
@@ -42,8 +47,7 @@ export default function Index() {
       });
       dispatch(removeItems());
       setProducts(remainItems);
-      if(showNotification)
-      message.success('Product removed successfully');
+      if (showNotification) message.success('Product removed successfully');
     } catch (error: any) {
       console.log(error);
     }
@@ -57,8 +61,8 @@ export default function Index() {
         quantity: e.target.value,
       };
       const response = await handleCartItemQuantity(product._id, data);
-      console.log("000000",response?.data);
-      
+      console.log('000000', response?.data);
+
       const updatedItems = products.map((item: any) => {
         if (item.id === response?.data._id) {
           const updatedItem = { ...item, quantity: e.target.value };
@@ -67,7 +71,7 @@ export default function Index() {
         return item;
       });
       setProducts(updatedItems);
-      setQuantityUpdated(quantityUpdated+1);
+      setQuantityUpdated(quantityUpdated + 1);
       message.success('quantity Updated');
     } catch (error) {
       console.log(error);
@@ -102,33 +106,40 @@ export default function Index() {
   const handleAddOrder = async () => {
     const totalAmount = getTotalAmount();
     const totalItems = getTotalItems();
-    const items=orderDetails.products;
-    const selectedAddress=orderDetails.address.addresses[0];
-    const user=orderDetails.userId;
+    const items = orderDetails.products;
+    const selectedAddress = orderDetails.address.addresses[0];
+    const user = orderDetails.userId;
     const paymentMethod = orderDetails.paymentMethod;
-    const data={totalAmount,totalItems,items,selectedAddress,user,paymentMethod}
+    const data = {
+      totalAmount,
+      totalItems,
+      items,
+      selectedAddress,
+      user,
+      paymentMethod,
+    };
     console.log(orderDetails);
 
     try {
       const response = await addOrder(data);
       resetCartAfterOrder(response.data._id);
       message.success('Order placed successfully');
-      console.log("99999",response.data._id);
-      
+      console.log('99999', response.data._id);
+
       router.push(`/order-success/${response?.data?._id}`);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const resetCartAfterOrder = async (orderId:any) => {
+  const resetCartAfterOrder = async (orderId: any) => {
     try {
       const userId = localStorage.getItem('userInfo');
       const response = await getCartItems(userId);
       const items = response?.items;
-      
+
       for (let item of items) {
-        await handleRemoveItems(item._id,false);
+        await handleRemoveItems(item._id, false);
       }
     } catch (error) {
       console.log(error);
@@ -137,121 +148,127 @@ export default function Index() {
 
   return (
     <>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 bg-white mt-8">
-        <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 mb-5">
-            All Products
-          </h1>
-          <div className="flow-root">
-            <ul role="list" className="-my-6 divide-y divide-gray-200">
-              {products &&
-                products.map((product: any) => (
-                  <li key={product.product.id} className="flex py-6">
-                    <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                      <img
-                        src={product.product.thumbnail}
-                        alt={product.product.imageAlt}
-                        className="h-full w-full object-cover object-center"
-                      />
-                    </div>
-                    <div className="ml-4 flex flex-1 flex-col">
-                      <div>
-                        <div className="flex justify-between text-base font-medium text-gray-900">
-                          <h3>
-                            <a href={product.product.href}>
-                              {product.product.title}
-                            </a>
-                          </h3>
-                          <p className="ml-4">${getItemPrice(product)}</p>
-                        </div>
-                        <p className="mt-1 text-sm text-gray-500">
-                          {product.product.brand}
-                        </p>
+      {!products ? (
+        <Loader />
+      ) : products?.length <= 0 ? (
+        <CartEmpty />
+      ) : (
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 bg-white mt-8">
+          <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900 mb-5">
+              All Products
+            </h1>
+            <div className="flow-root">
+              <ul role="list" className="-my-6 divide-y divide-gray-200">
+                {products &&
+                  products.map((product: any) => (
+                    <li key={product.product.id} className="flex py-6">
+                      <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                        <img
+                          src={product.product.thumbnail}
+                          alt={product.product.imageAlt}
+                          className="h-full w-full object-cover object-center"
+                        />
                       </div>
-                      <div className="flex flex-1 items-end justify-between text-sm">
-                        <div className="text-gray-500">
-                          <label
-                            htmlFor="quantity"
-                            className="inline text-sm font-medium leading-6 text-gray-900 mr-5"
-                          >
-                            QTY
-                          </label>
-                          <select
-                            onChange={(e) => handleQuantity(e, product)}
-                            defaultValue={product?.quantity}
-                          >
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="4">4</option>
-                            <option value="6">6</option>
-                            <option value="8">8</option>
-                            <option value="10">10</option>
-                          </select>
+                      <div className="ml-4 flex flex-1 flex-col">
+                        <div>
+                          <div className="flex justify-between text-base font-medium text-gray-900">
+                            <h3>
+                              <a href={product.product.href}>
+                                {product.product.title}
+                              </a>
+                            </h3>
+                            <p className="ml-4">${getItemPrice(product)}</p>
+                          </div>
+                          <p className="mt-1 text-sm text-gray-500">
+                            {product.product.brand}
+                          </p>
                         </div>
+                        <div className="flex flex-1 items-end justify-between text-sm">
+                          <div className="text-gray-500">
+                            <label
+                              htmlFor="quantity"
+                              className="inline text-sm font-medium leading-6 text-gray-900 mr-5"
+                            >
+                              QTY
+                            </label>
+                            <select
+                              onChange={(e) => handleQuantity(e, product)}
+                              defaultValue={product?.quantity}
+                            >
+                              <option value="1">1</option>
+                              <option value="2">2</option>
+                              <option value="4">4</option>
+                              <option value="6">6</option>
+                              <option value="8">8</option>
+                              <option value="10">10</option>
+                            </select>
+                          </div>
 
-                        <div className="flex">
-                          <button
-                            type="button"
-                            className="font-medium text-indigo-600 hover:text-indigo-500"
-                            onClick={() => handleRemoveItems(product._id)}
-                          >
-                            Remove
-                          </button>
+                          <div className="flex">
+                            <button
+                              type="button"
+                              className="font-medium text-indigo-600 hover:text-indigo-500"
+                              onClick={() => handleRemoveItems(product._id)}
+                            >
+                              Remove
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </li>
-                ))}
-            </ul>
+                    </li>
+                  ))}
+              </ul>
+            </div>
           </div>
-        </div>
 
-        <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
-          <div className="flex justify-between text-base font-medium text-gray-900">
-            <p>Subtotal</p>
-            <p>${getTotalAmount()}</p>
-          </div>
-          <div className="flex justify-between text-base font-medium text-gray-900">
-            <p>Total Items In Cart</p>
-            <p>{getTotalItems()} items</p>
-          </div>
-          <p className="mt-0.5 text-sm text-gray-500">
-            Shipping and taxes calculated at checkout.
-          </p>
-          <div className="mt-6">
-            {!path.includes('checkout') ? (
-              <Link
-                href="/checkout"
-                className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-              >
-                Checkout
-              </Link>
-            ) : (
-              <div
-                onClick={handleOrder}
-                className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 cursor-pointer"
-              >
-                Order and pay
-              </div>
-            )}
-          </div>
-          <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
-            <p>
-              or
-              <button
-                type="button"
-                className="font-medium text-indigo-600 hover:text-indigo-500 ml-2"
-                onClick={() => {
-                  router.push('/');
-                }}
-              >
-                Continue Shopping
-                <span aria-hidden="true"> &rarr;</span>
-              </button>
+          <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
+            <div className="flex justify-between text-base font-medium text-gray-900">
+              <p>Subtotal</p>
+              <p>${getTotalAmount()}</p>
+            </div>
+            <div className="flex justify-between text-base font-medium text-gray-900">
+              <p>Total Items In Cart</p>
+              <p>{getTotalItems()} items</p>
+            </div>
+            <p className="mt-0.5 text-sm text-gray-500">
+              Shipping and taxes calculated at checkout.
             </p>
+            <div className="mt-6">
+              {!path.includes('checkout') ? (
+                <Link
+                  href="/checkout"
+                  className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                >
+                  Checkout
+                </Link>
+              ) : (
+                <div
+                  onClick={handleOrder}
+                  className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 cursor-pointer"
+                >
+                  Order and pay
+                </div>
+              )}
+            </div>
+            <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
+              <p>
+                or
+                <button
+                  type="button"
+                  className="font-medium text-indigo-600 hover:text-indigo-500 ml-2"
+                  onClick={() => {
+                    router.push('/');
+                  }}
+                >
+                  Continue Shopping
+                  <span aria-hidden="true"> &rarr;</span>
+                </button>
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }
